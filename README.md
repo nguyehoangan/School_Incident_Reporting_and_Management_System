@@ -7,9 +7,9 @@ Hệ thống báo cáo & sửa chữa trang thiết bị trường học – Đ�
 .
 ├─ frontend/              # giao diện (static)
 │  ├─ index.html
-│  ├─ css/style.css
+│  ├─ css/styles.css
 │  ├─ js/app.js
-│  └─ assets/             # logoBK.webp, background.webp
+│  └─ assets/img/         # logoBK.webp, background.webp
 ├─ backend/               # máy chủ/API (bổ sung sau)
 └─ README.md
 ```
