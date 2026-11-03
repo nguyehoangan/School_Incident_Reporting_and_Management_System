@@ -7,9 +7,9 @@ Hệ thống báo cáo & sửa chữa trang thiết bị trường học – Đ�
 .
 ├─ frontend/              # giao diện (static)
 │  ├─ index.html
-│  ├─ css/styles.css
-│  ├─ js/app.js
-│  └─ assets/img/         # logoBK.webp, background.webp
+│  ├─ style.css
+│  ├─ app.js
+│  └─ assets/             # logoBK.webp, background.webp
 ├─ backend/               # máy chủ/API (bổ sung sau)
 └─ README.md
 ```
@@ -22,7 +22,7 @@ Trang một trang (hash router), 4 màn hình: **Splash** → **Đăng nhập** 
 - Hoặc bật GitHub Pages: Settings → Pages → `main` / `/root`, rồi truy cập `/frontend/`.
 
 ## Nối backend sau này
-Đổi 2 chỗ demo trong `frontend/js/app.js` thành gọi API bằng `fetch()`:
+Đổi 2 chỗ demo trong `frontend/app.js` thành gọi API bằng `fetch()`:
 - đăng nhập → `POST /api/login`
 - gửi phiếu → `POST /api/tickets` (gửi kèm ảnh dạng multipart).
 
