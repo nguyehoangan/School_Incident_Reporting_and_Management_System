@@ -1,20 +1,30 @@
 # School Incident Reporting and Management System
 
-Hệ thống báo cáo & sửa chữa trang thiết bị trường học (bản demo giao diện) – Đại học Bách khoa Hà Nội.
+Hệ thống báo cáo & sửa chữa trang thiết bị trường học – Đại học Bách khoa Hà Nội.
 
-## Nội dung
-Toàn bộ trang nằm trong **một tệp `index.html` tự chứa** (logo và ảnh nền được nhúng sẵn dạng data URI), nên chạy đúng ở bất kỳ đâu – mở trực tiếp, Live Server hay GitHub Pages – mà không cần tệp ảnh ngoài.
+## Cấu trúc
+```
+.
+├─ frontend/              # giao diện (static)
+│  ├─ index.html
+│  ├─ css/styles.css
+│  ├─ js/app.js
+│  └─ assets/img/         # logoBK.webp, background.webp
+├─ backend/               # máy chủ/API (bổ sung sau)
+└─ README.md
+```
 
-Gồm 4 màn hình nối nhau bằng hash router:
+## Màn hình
+Trang một trang (hash router), 4 màn hình: **Splash** → **Đăng nhập** → **Màn hình chính** → **Yêu cầu xử lý sự cố** (Hỗ trợ → Yêu cầu xử lý sự cố: phiếu theo biểu mẫu + bảng hư hỏng + tải ảnh).
 
-1. **Splash** – trang giới thiệu (dải đỏ + logo + ảnh sân trường).
-2. **Đăng nhập** – đăng nhập bằng email trường hoặc tài khoản/mật khẩu (bản demo: nhập bất kỳ).
-3. **Màn hình chính** – thanh menu, thông báo, tài khoản; nội dung để trắng.
-4. **Yêu cầu xử lý sự cố** (Hỗ trợ → Yêu cầu xử lý sự cố) – phiếu đề nghị sửa chữa theo biểu mẫu, bảng nội dung hư hỏng và ô tải ảnh hiện trạng.
+## Chạy frontend
+- Mở `frontend/index.html` bằng Live Server, **Go Live** từ chính file này.
+- Hoặc bật GitHub Pages: Settings → Pages → `main` / `/root`, rồi truy cập `/frontend/`.
 
-## Chạy thử
-- Mở `index.html` bằng trình duyệt hoặc Live Server.
-- Hoặc bật **GitHub Pages**: Settings → Pages → branch `main`, thư mục `/ (root)` → link công khai.
+## Nối backend sau này
+Đổi 2 chỗ demo trong `frontend/js/app.js` thành gọi API bằng `fetch()`:
+- đăng nhập → `POST /api/login`
+- gửi phiếu → `POST /api/tickets` (gửi kèm ảnh dạng multipart).
 
 ## Ghi chú
-Bản demo giao diện phục vụ nội bộ trường; logic đăng nhập/gửi phiếu chạy phía client (chưa có backend).
+Bản demo giao diện; logic đăng nhập/gửi phiếu hiện chạy phía client (chưa có backend).
