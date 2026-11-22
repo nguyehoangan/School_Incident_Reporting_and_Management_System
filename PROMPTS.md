@@ -28,7 +28,7 @@
 
 ## Đợt 1 – Nền móng
 ```
-Đọc @SPEC.md (mục 1, 2, 3, 8 phần khung chung và M01, 10, 13) và xem các ảnh trong design/.
+Đọc @SPEC.md (mục 1, 2, 3, 8 phần khung chung và M01, 10, 13) và xem các ảnh trong design/ và design/mockups/.
 Làm ĐỢT 1, chưa làm gì của các đợt sau:
 1. Khởi tạo dự án Node.js + Express + better-sqlite3 + EJS theo CLAUDE.md, có script npm start và npm run seed.
 2. Tạo đủ các bảng ở SPEC mục 10 (kể cả bảng chưa dùng tới) với khóa, ràng buộc UNIQUE đúng SPEC.
@@ -40,13 +40,14 @@ Làm ĐỢT 1, chưa làm gì của các đợt sau:
    chặn truy cập trang của vai trò khác. Các trang đích tạm thời chỉ cần tiêu đề.
 Lập kế hoạch trước. Khi code xong: chạy seed + start, đăng nhập thử cả 3 vai trò và 1 lần sai mật khẩu,
 1 lần dùng email ngoài trường; thử mở trang QL bằng tài khoản SV. Ghi tài khoản mẫu vào README.md.
-Chụp màn hình trang đăng nhập so với design/login-form.jpg, báo lại kết quả kèm bằng chứng.
+Chụp màn hình trang đăng nhập và khung giao diện, so với design/mockups/M01-dang-nhap.png và Q01-danh-sach-yeu-cau.png, báo lại kết quả kèm bằng chứng.
 ```
 **Kiểm tra:** 3 tài khoản vào đúng 3 trang; email `@gmail.com` bị chặn; SV gõ đường dẫn trang QL bị báo không có quyền.
 
 ## Đợt 2 – Sinh viên
 ```
 Đọc @SPEC.md mục 4 (bước 1, 2c), 6.1, 8 (S01, S02, S03), BR-09, BR-12.
+Giao diện bám theo design/mockups/S01-*.png, S02-*.png, S02b-*.png, S03-*.png.
 Làm ĐỢT 2: các màn S01 Yêu cầu của tôi, S02 Gửi yêu cầu mới, S03 Chi tiết yêu cầu cho Sinh viên.
 - S02: chọn Nhà → Phòng → Thiết bị phụ thuộc nhau (dữ liệu lấy từ danh mục, chỉ mục đang sử dụng),
   dòng "Không có trong danh sách" thì bắt chọn loại thiết bị; mọi trường bắt buộc báo "Mục này không được để trống" ngay dưới ô;
@@ -63,6 +64,7 @@ Báo kết quả kèm ảnh chụp.
 ## Đợt 3 – Quản lý xử lý yêu cầu
 ```
 Đọc @SPEC.md mục 4, 5 (nhất là bảng 5.1), 7.3, 7.4, 8 (Q01, Q02), 11.
+Giao diện bám theo design/mockups/Q01-*.png, Q01b-*.png, Q02-*.png.
 Làm ĐỢT 3 cho Quản lý:
 1. Module services/yeuCau.js chứa TOÀN BỘ logic chuyển trạng thái theo bảng 5.1 (kiểm tra vai trò, trạng thái hiện tại,
    trường bắt buộc), mỗi lần chuyển ghi lich_su_xu_ly, cập nhật thời gian, cập nhật tình trạng thiết bị theo mục 6.3,
@@ -80,6 +82,7 @@ Báo kết quả test và ảnh chụp.
 ## Đợt 4 – Kỹ thuật viên, chạy trọn một vòng
 ```
 Đọc @SPEC.md mục 4 (bước 3, 4a, 5a, 5c), 8 (K01, K02), BR-04.
+Giao diện bám theo design/mockups/K01-*.png, K02-*.png.
 Làm ĐỢT 4: màn K01 Việc được giao (nhóm theo nhà, tab, thẻ, hạn đỏ khi quá hạn) và K02 Chi tiết công việc
 với nhánh "Đã khắc phục tại chỗ" (bảng nhiều dòng Nội dung sửa chữa · Số lượng · Ghi chú lưu vào noi_dung_sua_chua, ảnh sau sửa).
 Nhánh "Không khắc phục tại chỗ" (biên bản M.04) để đợt 6, giờ hiện lựa chọn nhưng khóa lại.
@@ -93,6 +96,7 @@ Lập kế hoạch trước. Code xong: chạy lại toàn bộ test, rồi ch�
 ## Đợt 5 – Phân công, danh mục, KTV
 ```
 Đọc @SPEC.md mục 6, 7, 8 (Q03, Q04, Q05), BR-10.
+Giao diện bám theo design/mockups/Q03-*.png, Q04-*.png.
 Làm ĐỢT 5:
 - Q03 Bảng phân công: tab Khu vực phụ trách (sửa nhà phụ trách bằng ô đánh dấu, cảnh báo nhà chưa có KTV)
   và tab Công việc đã giao (lọc, bật xem bản ghi cũ).
@@ -109,6 +113,7 @@ Báo kết quả kèm ảnh chụp.
 ```
 Đọc @SPEC.md mục 4 (bước 4b, 5b, 6), 5, 6.3, 8 (Q02, Q06, K02), 9, BR-14, BR-15 và xem mẫu M.01, M.02, M.04
 trong @docs/QT06-quy-trinh-sua-chua.pdf (trang 10, 11, 13) cùng design/phieu-yeu-cau-mau.png.
+Giao diện bám theo design/mockups/Q02b-*.png, Q06-*.png, P01-*.png.
 Làm ĐỢT 6:
 1. Nhánh "Không khắc phục tại chỗ": form biên bản kiểm tra kỹ thuật ở K02, QL "Duyệt biên bản & chuyển phương án",
    trạng thái CHUYEN_XU_LY, QL "Đóng yêu cầu"; cập nhật thiết bị theo 6.3. Bổ sung test cho các chuyển trạng thái mới.
