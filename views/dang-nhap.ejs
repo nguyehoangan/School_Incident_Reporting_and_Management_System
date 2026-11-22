@@ -1,0 +1,31 @@
+<% const tieuDe = 'Đăng nhập'; %>
+<%- include('partials/head', { tieuDe }) %>
+<div class="trang-dang-nhap">
+  <%- include('partials/header', { nguoiDung: null }) %>
+  <main class="nen-dang-nhap">
+    <form class="hop-dang-nhap" method="post" action="/dang-nhap" novalidate>
+      <h1 class="hop-dang-nhap__tieu-de">Đăng nhập</h1>
+      <p class="hop-dang-nhap__goi-y">Sử dụng email trường để đăng nhập</p>
+
+      <% if (loi) { %>
+      <div class="thong-bao-loi" role="alert"><%= loi %></div>
+      <% } %>
+
+      <label class="nhan" for="email">Email trường <span class="bat-buoc">*</span></label>
+      <input class="o-nhap" id="email" name="email" type="email" value="<%= email %>"
+             placeholder="ten.mssv@sis.hust.edu.vn" autocomplete="username" required <%= loi ? '' : 'autofocus' %>>
+
+      <label class="nhan" for="mat_khau">Mật khẩu <span class="bat-buoc">*</span></label>
+      <div class="o-mat-khau">
+        <input class="o-nhap" id="mat_khau" name="mat_khau" type="password"
+               placeholder="Nhập mật khẩu" autocomplete="current-password" required <%= loi ? 'autofocus' : '' %>>
+        <button type="button" class="nut-mat" id="nutMat" aria-label="Hiện mật khẩu" aria-pressed="false">👁</button>
+      </div>
+
+      <button type="submit" class="nut-chinh nut-chinh--rong">Đăng nhập</button>
+      <p class="hop-dang-nhap__chu-thich">Dùng email @sis.hust.edu.vn (SV) hoặc @hust.edu.vn</p>
+    </form>
+  </main>
+</div>
+<script src="/public/js/dang-nhap.js"></script>
+<%- include('partials/foot') %>

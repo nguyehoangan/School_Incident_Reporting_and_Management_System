@@ -1,0 +1,214 @@
+/* Giao diện chung – phong cách web HUST (design/main-layout.jpg, login-screen.jpg, login-form.jpg). CSS thuần. */
+:root {
+  --do-hust: #bf2033;      /* nền header, lấy từ design/background-header.png */
+  --do-nut: #d9262c;       /* nút chính, như login-form.jpg */
+  --do-nut-dam: #b91c22;
+  --chu: #1f2328;
+  --chu-phu: #5f6470;
+  --vien: #e3e5ea;
+  --nen: #ffffff;
+  --nen-phu: #f4f6fa;
+  --loi-nen: #fdecec;
+  --loi-chu: #b42318;
+  --phong-chu: "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  color-scheme: light;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--nen);
+  color: var(--chu);
+  font-family: var(--phong-chu);
+  font-size: 15px;
+  line-height: 1.5;
+}
+img { max-width: 100%; }
+a { color: inherit; }
+button, input { font: inherit; }
+:focus-visible { outline: 2px solid #f2b705; outline-offset: 2px; }
+
+.khung {
+  width: 100%;
+  max-width: 1200px;
+  margin-inline: auto;
+  padding-inline: 16px;
+}
+
+/* ---------- Header đỏ ---------- */
+.dau-trang { background: var(--do-hust); color: #fff; }
+.dau-trang__trong {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 24px;
+  flex-wrap: wrap;
+  min-height: 72px;
+  padding-block: 8px;
+}
+.thuong-hieu {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  min-width: 0;
+}
+.thuong-hieu__logo { display: block; width: auto; height: 56px; flex: none; }
+.thuong-hieu__chu { display: flex; flex-direction: column; min-width: 0; line-height: 1.3; }
+.thuong-hieu__chu b { font-size: 16px; font-weight: 700; letter-spacing: .01em; }
+.thuong-hieu__chu small { font-size: 13px; text-transform: uppercase; opacity: .95; }
+
+.tai-khoan { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.tai-khoan form { margin: 0; }
+.tai-khoan__ten { font-weight: 600; font-size: 14px; }
+.nut-vien {
+  border: 1.5px solid #fff;
+  background: transparent;
+  color: #fff;
+  border-radius: 4px;
+  padding: 5px 18px;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .03em;
+  cursor: pointer;
+}
+.nut-vien:hover { background: #fff; color: var(--do-hust); }
+
+/* ---------- Thanh menu theo vai trò ---------- */
+.thanh-menu { background: #fff; border-bottom: 1px solid var(--vien); box-shadow: 0 1px 3px rgba(0, 0, 0, .04); }
+.thanh-menu__ds {
+  list-style: none;
+  margin: 0 auto;
+  display: flex;
+  gap: 4px 28px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.thanh-menu__ds::-webkit-scrollbar { display: none; }
+.thanh-menu__ds a {
+  display: block;
+  padding: 13px 0 11px;
+  border-bottom: 2px solid transparent;
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  text-decoration: none;
+}
+.thanh-menu__ds a:hover { color: var(--do-hust); }
+.thanh-menu__ds a.dang-mo { color: var(--do-hust); border-bottom-color: var(--do-hust); }
+
+/* ---------- Nội dung trang ---------- */
+.noi-dung { padding-block: 24px 48px; }
+.tieu-de-trang { margin: 0 0 8px; font-size: 22px; font-weight: 700; }
+.ghi-chu-tam { color: var(--chu-phu); margin: 0; }
+.hop-loi {
+  max-width: 520px;
+  margin: 40px auto;
+  padding: 28px 24px;
+  border: 1px solid var(--vien);
+  border-radius: 8px;
+  text-align: center;
+}
+.hop-loi .tieu-de-trang { color: var(--do-hust); }
+.hop-loi p { color: var(--chu-phu); }
+
+.nut-chinh {
+  display: inline-block;
+  border: 0;
+  border-radius: 999px;
+  background: var(--do-nut);
+  color: #fff;
+  padding: 9px 28px;
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+}
+.nut-chinh:hover { background: var(--do-nut-dam); }
+.nut-chinh--rong { display: block; width: 100%; }
+
+/* ---------- M01 Đăng nhập ---------- */
+.trang-dang-nhap { min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; background: var(--do-hust); }
+.nen-dang-nhap {
+  flex: 1;
+  display: grid;
+  place-items: center;
+  padding: 48px 16px;
+  background:
+    linear-gradient(180deg, var(--do-hust) 0%, rgba(191, 32, 51, .55) 14%, rgba(191, 32, 51, 0) 38%),
+    #3a1a16 url(/design/background.webp) center 35% / cover no-repeat;
+}
+.hop-dang-nhap {
+  width: 100%;
+  max-width: 340px;
+  background: #fff;
+  border-radius: 8px;
+  padding: 22px 16px 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, .25);
+}
+.hop-dang-nhap__tieu-de {
+  margin: 0 0 14px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #d9dbe0;
+  font-size: 18px;
+  font-weight: 700;
+}
+.hop-dang-nhap__goi-y { margin: 0 0 12px; text-align: center; font-size: 12px; font-style: italic; font-weight: 600; color: #444; }
+.hop-dang-nhap__chu-thich { margin: 12px 0 0; text-align: center; font-size: 12px; color: var(--chu-phu); }
+.thong-bao-loi {
+  margin: 0 0 12px;
+  padding: 8px 10px;
+  border: 1px solid #f5c2c0;
+  border-radius: 4px;
+  background: var(--loi-nen);
+  color: var(--loi-chu);
+  font-size: 13px;
+}
+.nhan { display: block; margin: 0 0 5px; font-size: 13px; font-weight: 500; }
+.bat-buoc { color: var(--do-nut); }
+.o-nhap {
+  display: block;
+  width: 100%;
+  margin: 0 0 12px;
+  padding: 7px 10px;
+  border: 1px solid #dcdfe4;
+  border-radius: 4px;
+  background: #fff;
+  color: var(--chu);
+  font-size: 14px;
+}
+.o-nhap::placeholder { color: #9aa0a6; }
+.o-nhap:focus { outline: none; border-color: var(--do-nut); box-shadow: 0 0 0 2px rgba(217, 38, 44, .15); }
+.o-mat-khau { position: relative; }
+.o-mat-khau .o-nhap { padding-right: 40px; }
+.nut-mat {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+  max-height: 38px;
+  width: 38px;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+  opacity: .6;
+}
+.nut-mat[aria-pressed="true"], .nut-mat:hover { opacity: 1; }
+.hop-dang-nhap .nut-chinh { margin-top: 6px; padding-block: 10px; }
+
+/* ---------- Điện thoại ---------- */
+@media (max-width: 640px) {
+  .dau-trang__trong { min-height: 0; }
+  .thuong-hieu__logo { height: 44px; }
+  .thuong-hieu__chu b { font-size: 14px; }
+  .thuong-hieu__chu small { font-size: 11px; }
+  .tai-khoan { width: 100%; justify-content: space-between; padding-top: 6px; border-top: 1px solid rgba(255, 255, 255, .25); }
+  .tai-khoan__ten { font-size: 13px; }
+  .thanh-menu__ds { gap: 4px 20px; }
+  .tieu-de-trang { font-size: 19px; }
+  .nen-dang-nhap { place-items: start center; padding-top: 32px; }
+}

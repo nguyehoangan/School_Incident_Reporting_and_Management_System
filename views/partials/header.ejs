@@ -1,0 +1,28 @@
+<header class="dau-trang">
+  <div class="dau-trang__trong khung">
+    <a class="thuong-hieu" href="<%= nguoiDung ? trangDau : '/dang-nhap' %>">
+      <img class="thuong-hieu__logo" src="/design/logoBK.webp" alt="Logo Đại học Bách khoa Hà Nội" width="40" height="60">
+      <span class="thuong-hieu__chu">
+        <b>ĐẠI HỌC BÁCH KHOA HÀ NỘI</b>
+        <small><%= tenHeThong %></small>
+      </span>
+    </a>
+    <% if (nguoiDung) { %>
+    <div class="tai-khoan">
+      <span class="tai-khoan__ten"><%= nguoiDung.ho_ten %> – <%= tenVaiTro %></span>
+      <form method="post" action="/dang-xuat">
+        <button type="submit" class="nut-vien">Đăng xuất</button>
+      </form>
+    </div>
+    <% } %>
+  </div>
+</header>
+<% if (nguoiDung && menu.length) { %>
+<nav class="thanh-menu" aria-label="Menu chính">
+  <ul class="thanh-menu__ds khung">
+    <% menu.forEach(function (muc) { const dangMo = duongDanHienTai === muc.duongDan || duongDanHienTai.startsWith(muc.duongDan + '/'); %>
+    <li><a href="<%= muc.duongDan %>" class="<%= dangMo ? 'dang-mo' : '' %>" <%- dangMo ? 'aria-current="page"' : '' %>><%= muc.ten %></a></li>
+    <% }) %>
+  </ul>
+</nav>
+<% } %>
