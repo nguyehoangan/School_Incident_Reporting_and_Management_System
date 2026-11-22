@@ -1,0 +1,110 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header') %>
+<main class="noi-dung khung">
+  <p class="quay-lai"><a href="/sinh-vien/yeu-cau">← Yêu cầu của tôi</a></p>
+
+  <% if (thongBao) { %>
+  <div class="thong-bao <%= thongBao.loai === 'ok' ? 'thong-bao--ok' : 'thong-bao--loi' %>" role="<%= thongBao.loai === 'ok' ? 'status' : 'alert' %>"><%= thongBao.noiDung %></div>
+  <% } %>
+
+  <div class="thanh-tieu-de">
+    <h1 class="tieu-de-trang">Yêu cầu <%= yc.ma_yeu_cau %> <span class="nhan-tt nhan-tt--<%= trangThai.mau %>"><%= trangThai.ten %></span></h1>
+    <div class="nhom-nut">
+      <button type="button" class="nut-phu" id="nut-in-m01" hidden>In phiếu yêu cầu (M.01)</button>
+      <% if (choPhepHuy) { %>
+      <button type="button" class="nut-nguy-hiem" id="nut-huy">Hủy yêu cầu</button>
+      <% } %>
+    </div>
+  </div>
+
+  <section class="khoi" aria-labelledby="tt-tien-do">
+    <h2 class="khoi__tieu-de" id="tt-tien-do">Tiến độ</h2>
+    <ol class="tien-do">
+      <% tienDo.forEach(function (b) { %>
+      <li class="tien-do__buoc tien-do__buoc--<%= b.tt %>">
+        <span class="tien-do__cham" aria-hidden="true"></span>
+        <span class="tien-do__ten"><%= b.ten %></span>
+        <span class="tien-do__luc"><%= b.luc ? dinhDang(b.luc) : '' %></span>
+      </li>
+      <% }) %>
+    </ol>
+    <% if (phuongAn) { %><p class="phuong-an">Phương án xử lý: <b><%= phuongAn %></b></p><% } %>
+  </section>
+
+  <% if (yc.trang_thai === 'TU_CHOI' && yc.ly_do_tu_choi) { %>
+  <div class="thong-bao thong-bao--loi"><b>Lý do từ chối:</b> <%= yc.ly_do_tu_choi %></div>
+  <% } %>
+  <% if (yc.ghi_chu_ql) { %>
+  <div class="thong-bao thong-bao--tin"><b>Ghi chú của Quản lý:</b> <%= yc.ghi_chu_ql %></div>
+  <% } %>
+
+  <section class="khoi" aria-labelledby="tt-thong-tin">
+    <h2 class="khoi__tieu-de" id="tt-thong-tin">Thông tin yêu cầu</h2>
+    <dl class="the-thong-tin">
+      <div><dt>Mã yêu cầu</dt><dd><%= yc.ma_yeu_cau %></dd></div>
+      <div><dt>Thời gian gửi</dt><dd><%= dinhDang(yc.thoi_gian_gui) %></dd></div>
+      <div><dt>Nhà</dt><dd><%= yc.ten_nha %> (<%= yc.ma_nha %>)</dd></div>
+      <div><dt>Phòng</dt><dd><%= phong %></dd></div>
+      <div><dt>Thiết bị</dt><dd><%= thietBi || 'Không có trong danh sách' %></dd></div>
+      <div><dt>Loại thiết bị</dt><dd><%= yc.ten_loai %></dd></div>
+      <div><dt>Mức độ</dt><dd><span class="muc-do <%= yc.muc_do === 'KHAN_CAP' ? 'muc-do--khan' : '' %>"><%= yc.muc_do === 'KHAN_CAP' ? '⚠ ' : '' %><%= mucDo %></span></dd></div>
+      <div class="rong-het"><dt>Mô tả hư hỏng</dt><dd class="xuong-dong"><%= yc.mo_ta %></dd></div>
+    </dl>
+    <% if (anhTruoc.length) { %>
+    <h3 class="khoi__tieu-de-nho">Ảnh đính kèm</h3>
+    <ul class="luoi-anh">
+      <% anhTruoc.forEach(function (a, i) { %>
+      <li><button type="button" class="anh-bam" data-anh="<%= a %>" aria-label="Phóng to ảnh <%= i + 1 %>"><img src="<%= a %>" alt="Ảnh hư hỏng <%= i + 1 %>" loading="lazy"></button></li>
+      <% }) %>
+    </ul>
+    <% } %>
+  </section>
+
+  <% if (yc.trang_thai === 'HOAN_THANH' && (yc.ket_qua_cuoi || noiDungSua.length || anhSau.length)) { %>
+  <section class="khoi" aria-labelledby="tt-ket-qua">
+    <h2 class="khoi__tieu-de" id="tt-ket-qua">Kết quả sửa chữa</h2>
+    <% if (yc.ket_qua_cuoi) { %><p><%= yc.ket_qua_cuoi %></p><% } %>
+    <% if (noiDungSua.length) { %>
+    <div class="cuon-ngang">
+      <table class="bang bang--don">
+        <thead><tr><th>STT</th><th>Nội dung sửa chữa</th><th>Số lượng</th><th>Ghi chú</th></tr></thead>
+        <tbody>
+          <% noiDungSua.forEach(function (d) { %>
+          <tr><td><%= d.stt %></td><td><%= d.noi_dung %></td><td><%= d.so_luong == null ? '' : d.so_luong %></td><td><%= d.ghi_chu || '' %></td></tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+    <% } %>
+    <% if (anhSau.length) { %>
+    <h3 class="khoi__tieu-de-nho">Ảnh sau sửa</h3>
+    <ul class="luoi-anh">
+      <% anhSau.forEach(function (a, i) { %>
+      <li><button type="button" class="anh-bam" data-anh="<%= a %>" aria-label="Phóng to ảnh sau sửa <%= i + 1 %>"><img src="<%= a %>" alt="Ảnh sau sửa <%= i + 1 %>" loading="lazy"></button></li>
+      <% }) %>
+    </ul>
+    <% } %>
+  </section>
+  <% } %>
+</main>
+
+<dialog class="hop-thoai hop-thoai--anh" id="hop-anh" aria-label="Xem ảnh phóng to">
+  <button type="button" class="hop-thoai__dong" data-dong aria-label="Đóng">✕</button>
+  <img id="hop-anh-hinh" alt="">
+</dialog>
+
+<% if (choPhepHuy) { %>
+<dialog class="hop-thoai" id="hop-huy" aria-labelledby="hop-huy-tieu-de">
+  <form method="post" action="/sinh-vien/yeu-cau/<%= yc.id %>/huy">
+    <button type="button" class="hop-thoai__dong" data-dong aria-label="Đóng">✕</button>
+    <h2 class="hop-thoai__tieu-de" id="hop-huy-tieu-de">Hủy yêu cầu?</h2>
+    <p>Bạn có chắc muốn hủy yêu cầu <b><%= yc.ma_yeu_cau %></b>? Sau khi hủy không thể khôi phục.</p>
+    <div class="hop-thoai__nut">
+      <button type="button" class="nut-phu" data-dong>Không hủy</button>
+      <button type="submit" class="nut-nguy-hiem">Hủy yêu cầu</button>
+    </div>
+  </form>
+</dialog>
+<% } %>
+<script src="/public/js/chi-tiet.js"></script>
+<%- include('../partials/foot') %>

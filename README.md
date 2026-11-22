@@ -2,7 +2,7 @@
 
 Bài tập lớn ET3260 – Nhóm 4. Web cho 3 vai trò: **Sinh viên** báo hỏng thiết bị phòng học, **Quản lý** tiếp nhận / phân công / nghiệm thu, **Kỹ thuật viên** kiểm tra và sửa. Đặc tả đầy đủ trong [`SPEC.md`](SPEC.md).
 
-Công nghệ: Node.js + Express, SQLite (`better-sqlite3`), giao diện EJS + CSS thuần, `express-session`, `bcrypt`.
+Công nghệ: Node.js + Express, SQLite (`better-sqlite3`), giao diện EJS + CSS thuần, `express-session`, `bcrypt`, `multer` (ảnh lưu ở `uploads/yeu-cau/`).
 
 ## Chạy thử
 
@@ -36,6 +36,7 @@ Dữ liệu mẫu còn có 5 nhà (D3, D5, D9, C7, TC), 21 phòng, 93 thiết b�
 app.js               máy chủ Express
 db/schema.sql        12 bảng theo SPEC mục 10
 db/index.js          kết nối SQLite
+services/yeuCau.js   logic nghiệp vụ của yêu cầu (gửi, hủy; đợt sau thêm các chuyển trạng thái khác)
 lib/                 hằng số (vai trò, trạng thái), giờ Việt Nam, menu theo vai trò
 middleware/auth.js   phiên đăng nhập, chặn truy cập theo vai trò (ở server)
 routes/              đăng nhập + trang của SV / QL / KTV
@@ -49,6 +50,7 @@ design/, docs/       ảnh giao diện mẫu, sơ đồ, quy trình QT.06
 ## Tiến độ
 
 - [x] Đợt 1: CSDL, dữ liệu mẫu, khung giao diện, đăng nhập và chuyển trang theo vai trò
-- [ ] Đợt 2–6: xem `PROMPTS.md`
+- [x] Đợt 2: màn hình Sinh viên (S01 Yêu cầu của tôi, S02 Gửi yêu cầu mới, S03 Chi tiết / Hủy yêu cầu)
+- [ ] Đợt 3–6: xem `PROMPTS.md`
 
 Thư mục `frontend/`, `backend/` và `index.html` ở gốc là bản thử giao diện tĩnh cũ (chạy trên GitHub Pages), không dùng cho ứng dụng này.

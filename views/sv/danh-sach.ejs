@@ -1,0 +1,63 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header') %>
+<main class="noi-dung khung">
+  <div class="thanh-tieu-de">
+    <h1 class="tieu-de-trang">Yêu cầu của tôi</h1>
+    <a class="nut-chinh" href="/sinh-vien/gui-yeu-cau">+ Gửi yêu cầu mới</a>
+  </div>
+
+  <% if (tongTatCa === 0) { %>
+  <div class="trang-rong">
+    <p>Bạn chưa gửi yêu cầu nào</p>
+    <a class="nut-chinh" href="/sinh-vien/gui-yeu-cau">+ Gửi yêu cầu mới</a>
+  </div>
+  <% } else { %>
+  <nav class="bo-loc" aria-label="Lọc theo trạng thái">
+    <% Object.keys(boLoc).forEach(function (k) { %>
+    <a href="/sinh-vien/yeu-cau<%= k === 'tat-ca' ? '' : '?tt=' + k %>" class="bo-loc__muc <%= k === khoa ? 'dang-chon' : '' %>" <%- k === khoa ? 'aria-current="true"' : '' %>><%= boLoc[k].ten %></a>
+    <% }) %>
+  </nav>
+
+  <% if (dong.length === 0) { %>
+  <div class="trang-rong"><p>Không có yêu cầu nào ở mục "<%= boLoc[khoa].ten %>"</p></div>
+  <% } else { %>
+  <table class="bang bang--the">
+    <thead>
+      <tr>
+        <th>Mã yêu cầu</th><th>Thời gian gửi</th><th>Mức độ</th><th>Thiết bị</th>
+        <th>Phòng</th><th>Trạng thái</th><th>Ghi chú của QL</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% dong.forEach(function (r) { %>
+      <tr class="dong-bam-duoc" data-href="/sinh-vien/yeu-cau/<%= r.id %>">
+        <td data-nhan="Mã yêu cầu"><a class="ma-yeu-cau" href="/sinh-vien/yeu-cau/<%= r.id %>"><%= r.ma %></a></td>
+        <td data-nhan="Thời gian gửi" class="khong-xuong-dong"><%= dinhDang(r.guiLuc) %></td>
+        <td data-nhan="Mức độ"><span class="muc-do <%= r.khanCap ? 'muc-do--khan' : '' %>"><%= r.khanCap ? '⚠ ' : '' %><%= r.mucDo %></span></td>
+        <td data-nhan="Thiết bị"><%= r.thietBi %></td>
+        <td data-nhan="Phòng" class="khong-xuong-dong"><%= r.phong %></td>
+        <td data-nhan="Trạng thái"><span class="nhan-tt nhan-tt--<%= r.trangThai.mau %>"><%= r.trangThai.ten %></span></td>
+        <td data-nhan="Ghi chú của QL"><%= r.ghiChuQl || '–' %></td>
+      </tr>
+      <% }) %>
+    </tbody>
+  </table>
+
+  <div class="phan-trang-thanh">
+    <span class="phan-trang-thanh__tong"><%= tong %> yêu cầu</span>
+    <% if (soTrang > 1) { %>
+    <nav class="phan-trang" aria-label="Phân trang">
+      <% const lien = (t) => '/sinh-vien/yeu-cau?' + (khoa !== 'tat-ca' ? 'tt=' + khoa + '&' : '') + 'trang=' + t; %>
+      <% if (trang > 1) { %><a href="<%= lien(trang - 1) %>" aria-label="Trang trước">«</a><% } else { %><span class="tat" aria-hidden="true">«</span><% } %>
+      <% for (let t = 1; t <= soTrang; t++) { %>
+        <% if (t === trang) { %><span class="dang-chon" aria-current="page"><%= t %></span><% } else { %><a href="<%= lien(t) %>"><%= t %></a><% } %>
+      <% } %>
+      <% if (trang < soTrang) { %><a href="<%= lien(trang + 1) %>" aria-label="Trang sau">»</a><% } else { %><span class="tat" aria-hidden="true">»</span><% } %>
+    </nav>
+    <% } %>
+  </div>
+  <% } %>
+  <% } %>
+</main>
+<script src="/public/js/danh-sach.js"></script>
+<%- include('../partials/foot') %>
