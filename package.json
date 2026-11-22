@@ -1,0 +1,21 @@
+{
+  "name": "he-thong-bao-hong-csvc",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Hệ thống báo hỏng & sửa chữa cơ sở vật chất – BTL ET3260 Nhóm 4",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "seed": "node scripts/seed.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "better-sqlite3": "^13.2.0",
+    "ejs": "^7.0.2",
+    "express": "^4.22.3",
+    "express-session": "^1.19.0"
+  }
+}

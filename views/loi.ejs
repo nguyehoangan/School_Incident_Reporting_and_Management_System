@@ -1,0 +1,14 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+<main class="noi-dung khung">
+  <div class="hop-loi">
+    <h1 class="tieu-de-trang"><%= tieuDe %></h1>
+    <p><%= thongDiep %></p>
+    <% if (nguoiDung) { %>
+      <a class="nut-chinh" href="<%= trangDau %>">Về trang của tôi</a>
+    <% } else { %>
+      <a class="nut-chinh" href="/dang-nhap">Đến trang đăng nhập</a>
+    <% } %>
+  </div>
+</main>
+<%- include('partials/foot') %>
