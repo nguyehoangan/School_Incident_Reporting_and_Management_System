@@ -1,0 +1,102 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header') %>
+<main class="noi-dung khung">
+  <h1 class="tieu-de-trang">Gửi yêu cầu mới</h1>
+  <p class="chu-phu">Các mục có dấu <span class="bat-buoc">*</span> là bắt buộc.</p>
+
+  <div class="thong-bao thong-bao--loi" id="loi-chung" role="alert" hidden></div>
+
+  <form class="form-yc" id="form-yc" novalidate autocomplete="off">
+    <div class="luoi-form">
+      <div class="truong">
+        <label class="nhan" for="mssv">MSSV</label>
+        <input class="o-nhap" id="mssv" type="text" value="<%= nguoiDung.ma_so || '' %>" readonly>
+      </div>
+      <div class="truong">
+        <label class="nhan" for="ho-ten">Họ tên</label>
+        <input class="o-nhap" id="ho-ten" type="text" value="<%= nguoiDung.ho_ten %>" readonly>
+      </div>
+      <div class="truong rong-het">
+        <label class="nhan" for="email">Email</label>
+        <input class="o-nhap" id="email" type="email" value="<%= nguoiDung.email %>" readonly>
+      </div>
+
+      <div class="truong" data-truong="nha_id">
+        <label class="nhan" for="nha_id">Nhà <span class="bat-buoc">*</span></label>
+        <select class="o-nhap" id="nha_id" name="nha_id" aria-describedby="loi-nha_id"></select>
+        <p class="loi-truong" id="loi-nha_id" hidden></p>
+      </div>
+      <div class="truong" data-truong="phong_id">
+        <label class="nhan" for="phong_id">Phòng <span class="bat-buoc">*</span></label>
+        <select class="o-nhap" id="phong_id" name="phong_id" aria-describedby="loi-phong_id"></select>
+        <p class="loi-truong" id="loi-phong_id" hidden></p>
+      </div>
+      <div class="truong" data-truong="thiet_bi_id">
+        <label class="nhan" for="thiet_bi_id">Thiết bị <span class="bat-buoc">*</span></label>
+        <select class="o-nhap" id="thiet_bi_id" name="thiet_bi_id" aria-describedby="loi-thiet_bi_id"></select>
+        <p class="loi-truong" id="loi-thiet_bi_id" hidden></p>
+      </div>
+      <div class="truong" data-truong="loai_thiet_bi_id">
+        <label class="nhan" for="loai_thiet_bi_id">Loại thiết bị <span class="bat-buoc">*</span></label>
+        <select class="o-nhap" id="loai_thiet_bi_id" name="loai_thiet_bi_id" aria-describedby="loi-loai_thiet_bi_id"></select>
+        <p class="loi-truong" id="loi-loai_thiet_bi_id" hidden></p>
+      </div>
+
+      <fieldset class="truong rong-het nhom-chon" data-truong="muc_do" aria-describedby="loi-muc_do goi-y-muc_do">
+        <legend class="nhan">Mức độ <span class="bat-buoc">*</span></legend>
+        <div class="chon-muc-do">
+          <label class="the-chon"><input type="radio" name="muc_do" value="KHAN_CAP"> <span>⚠ <%= mucDo.KHAN_CAP %></span></label>
+          <label class="the-chon"><input type="radio" name="muc_do" value="BINH_THUONG"> <span><%= mucDo.BINH_THUONG %></span></label>
+        </div>
+        <p class="loi-truong" id="loi-muc_do" hidden></p>
+        <p class="goi-y" id="goi-y-muc_do"><b>Khẩn cấp:</b> ảnh hưởng buổi học hoặc an toàn. <b>Bình thường:</b> các trường hợp còn lại.</p>
+      </fieldset>
+
+      <div class="truong rong-het" data-truong="mo_ta">
+        <label class="nhan" for="mo_ta">Mô tả hư hỏng <span class="bat-buoc">*</span></label>
+        <textarea class="o-nhap" id="mo_ta" name="mo_ta" rows="4" maxlength="<%= gioiHan.moTaMax %>"
+                  placeholder="Máy chiếu bật không lên hình, đèn báo nhấp nháy đỏ" aria-describedby="loi-mo_ta dem-mo_ta"></textarea>
+        <p class="loi-truong" id="loi-mo_ta" hidden></p>
+        <p class="goi-y" id="dem-mo_ta">Từ <%= gioiHan.moTaMin %> đến <%= gioiHan.moTaMax %> ký tự · <span id="so-ky-tu">0</span>/<%= gioiHan.moTaMax %></p>
+      </div>
+
+      <div class="truong rong-het" data-truong="anh">
+        <span class="nhan" id="nhan-anh">Ảnh đính kèm <span class="bat-buoc">*</span></span>
+        <div class="tai-anh">
+          <input type="file" id="chon-anh" accept="image/jpeg,image/png,.jpg,.jpeg,.png" multiple hidden>
+          <button type="button" class="nut-phu" id="nut-chon-anh">+ Chọn ảnh</button>
+          <span class="goi-y">1–<%= gioiHan.anhToiDa %> ảnh, JPG hoặc PNG, mỗi ảnh ≤ 5 MB</span>
+        </div>
+        <p class="loi-truong" id="loi-anh" hidden></p>
+        <ul class="luoi-anh luoi-anh--xem-truoc" id="xem-truoc" aria-live="polite"></ul>
+      </div>
+    </div>
+
+    <div class="hang-nut">
+      <button type="submit" class="nut-chinh" id="nut-gui">Gửi yêu cầu</button>
+      <a class="nut-phu" href="/sinh-vien/yeu-cau">Quay lại</a>
+    </div>
+  </form>
+</main>
+
+<dialog class="hop-thoai" id="hop-trung" aria-labelledby="hop-trung-tieu-de">
+  <h2 class="hop-thoai__tieu-de" id="hop-trung-tieu-de">Có thể trùng yêu cầu</h2>
+  <p id="hop-trung-noi-dung"></p>
+  <div class="hop-thoai__nut">
+    <button type="button" class="nut-phu" id="nut-huy-trung">Hủy</button>
+    <button type="button" class="nut-chinh" id="nut-van-gui">Vẫn gửi</button>
+  </div>
+</dialog>
+
+<dialog class="hop-thoai" id="hop-thanh-cong" aria-labelledby="hop-thanh-cong-tieu-de">
+  <button type="button" class="hop-thoai__dong" id="nut-dong-thanh-cong" aria-label="Đóng">✕</button>
+  <h2 class="hop-thoai__tieu-de hop-thoai__tieu-de--ok" id="hop-thanh-cong-tieu-de">Đã gửi yêu cầu</h2>
+  <p id="hop-thanh-cong-noi-dung"></p>
+  <div class="hop-thoai__nut">
+    <a class="nut-chinh" id="nut-xem-yeu-cau" href="/sinh-vien/yeu-cau">Xem yêu cầu</a>
+  </div>
+</dialog>
+
+<script type="application/json" id="du-lieu-danh-muc"><%- JSON.stringify({ danhMuc, gioiHan }).replace(/</g, '\\u003c') %></script>
+<script src="/public/js/gui-yeu-cau.js"></script>
+<%- include('../partials/foot') %>
