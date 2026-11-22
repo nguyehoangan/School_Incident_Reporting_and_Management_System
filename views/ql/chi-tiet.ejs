@@ -1,0 +1,408 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header') %>
+<%
+  const tt = yc.trang_thai;
+  const coHD = (h) => hanhDong.includes(h);
+  // Giá trị / lỗi của lần gửi trước (khi server báo lỗi dữ liệu) – chỉ áp cho đúng form đã gửi
+  const cuaForm = (slug) => flash && flash.loai === 'loi' && flash.hanhDong === slug;
+  const gt = (slug, k, macDinh) => (cuaForm(slug) && flash.duLieu && flash.duLieu[k] !== undefined ? flash.duLieu[k] : macDinh);
+  const loi = (slug, k) => (cuaForm(slug) && flash.loiTruong ? flash.loiTruong[k] : null);
+  const moSan = (slug) => (cuaForm(slug) ? 'data-mo-san' : '');
+  const hanGoiY = yc.muc_do === 'KHAN_CAP' ? 'Khẩn cấp: trong ngày giao (QT.06)' : 'Bình thường: 01 ngày làm việc, bỏ qua thứ Bảy, Chủ nhật (QT.06)';
+  const mauKhoi = { MOI: 'xanh', DA_PHAN_CONG: 'xanh', DANG_SUA: 'xanh', CHO_NGHIEM_THU: 'tim', CHUYEN_XU_LY: 'cam' }[tt] || 'xam';
+  const ktvMacDinh = goiY.length ? goiY[0].id : '';
+  const batDauLuc = (lichSu.filter(function (h) { return h.thaoTac === 'Bắt đầu kiểm tra'; }).pop() || {}).thoiGian;
+  const baoKetQuaLuc = (lichSu.filter(function (h) { return h.thaoTac === 'Báo kết quả'; }).pop() || {}).thoiGian;
+  const bb = bienBan;
+  // Phương án gợi ý theo biên bản: còn bảo hành -> Bảo hành; nếu không lấy biện pháp KTV đề nghị đầu tiên
+  const paGoiY = !bb ? '' : bb.con_bao_hanh ? 'BAO_HANH' : bb.de_xuat_mua_vat_tu ? 'MUA_VAT_TU' : bb.de_xuat_thue_sua ? 'THUE_NGOAI' : bb.de_xuat_thanh_ly ? 'THANH_LY' : '';
+%>
+<main class="noi-dung khung">
+  <nav class="vet-dan" aria-label="Vị trí">Quản lý / <a href="<%= quayLai %>">Danh sách yêu cầu</a> / <span><%= yc.ma_yeu_cau %></span></nav>
+  <div class="thanh-tieu-de">
+    <h1 class="tieu-de-trang">Yêu cầu <%= yc.ma_yeu_cau %>
+      <span class="nhan-tt nhan-tt--<%= trangThai.mau %>"><%= trangThai.ql %></span>
+      <% if (yc.muc_do === 'KHAN_CAP') { %><span class="muc-do muc-do--khan">⚠ Khẩn cấp</span><% } %>
+    </h1>
+    <div class="nhom-nut">
+      <a class="nut-vien-xam" href="<%= quayLai %>">‹ Quay lại danh sách</a>
+      <button type="button" class="nut-vien-xam" id="nut-in-m01" hidden>In M.01</button>
+    </div>
+  </div>
+
+  <% if (flash) { %>
+  <div class="thong-bao <%= flash.loai === 'ok' ? 'thong-bao--ok' : 'thong-bao--loi' %>" role="<%= flash.loai === 'ok' ? 'status' : 'alert' %>"><%= flash.noiDung %></div>
+  <% } %>
+
+  <div class="luoi-q02">
+    <!-- ======================================================= 1. Thông tin yêu cầu -->
+    <section class="the-trang" aria-labelledby="k1">
+      <h2 class="the-trang__tieu-de" id="k1">1. Thông tin yêu cầu</h2>
+      <dl class="dong-tt">
+        <dt>Thời gian gửi</dt><dd><%= dinhDang(yc.thoi_gian_gui) %></dd>
+        <dt>Sinh viên</dt><dd><%= yc.ten_sv %> · <%= yc.mssv %> · <%= yc.email_sv %></dd>
+        <dt>Nhà – Phòng</dt><dd><%= yc.ma_nha %> – <%= phong %></dd>
+        <dt>Thiết bị</dt>
+        <dd>
+          <% if (yc.thiet_bi_id) { %>
+          <%= yc.ten_thiet_bi %><%= yc.model_hang ? ' ' + yc.model_hang : '' %> · <%= yc.ma_tai_san %> ·
+          <span class="nhan-tt nhan-tt--<%= { HOAT_DONG: 'xanh-la', DANG_SUA: 'xanh', CHO_THAY_THE: 'cam', THANH_LY: 'xam' }[yc.tinh_trang_tb] %>"><%= tinhTrangTB[yc.tinh_trang_tb] %></span>
+          <% } else { %>
+          Không có trong danh sách
+          <% } %>
+        </dd>
+        <dt>Loại thiết bị</dt><dd><%= yc.ten_loai %></dd>
+        <dt>Mức độ</dt><dd><span class="muc-do <%= yc.muc_do === 'KHAN_CAP' ? 'muc-do--khan' : '' %>"><%= yc.muc_do === 'KHAN_CAP' ? '⚠ ' : '' %><%= mucDo[yc.muc_do] %></span></dd>
+        <dt>Mô tả</dt><dd class="xuong-dong"><%= yc.mo_ta %></dd>
+        <% if (pc && tt !== 'MOI') { %>
+        <dt>KTV</dt><dd><%= pc.ten_ktv %> · giao <%= dinhDang(pc.thoi_gian_giao) %></dd>
+        <% } %>
+        <% if (yc.ghi_chu_ql) { %><dt>Ghi chú cho SV</dt><dd class="xuong-dong"><%= yc.ghi_chu_ql %></dd><% } %>
+        <dt>Ảnh</dt>
+        <dd>
+          <% if (anhTruoc.length) { %>
+          <ul class="luoi-anh luoi-anh--nho">
+            <% anhTruoc.forEach(function (a, i) { %>
+            <li><button type="button" class="anh-bam" data-anh="<%= a %>" aria-label="Phóng to ảnh <%= i + 1 %>"><img src="<%= a %>" alt="Ảnh hư hỏng <%= i + 1 %>" loading="lazy"></button></li>
+            <% }) %>
+          </ul>
+          <% } else { %>–<% } %>
+        </dd>
+      </dl>
+      <% if (soYeuCauKhac) { %>
+      <p class="lien-ket-xanh"><a href="/quan-ly/yeu-cau?q=<%= encodeURIComponent(phong) %>">Các yêu cầu khác của thiết bị / phòng này (<%= soYeuCauKhac %>) →</a></p>
+      <% } %>
+    </section>
+
+    <!-- ======================================================= 2. Khối xử lý (nút theo trạng thái – mục 8 Q02) -->
+    <section class="the-trang the-trang--xu-ly the-trang--<%= mauKhoi %>" id="xu-ly" aria-labelledby="k2">
+      <% if (tt === 'MOI') { %>
+        <h2 class="the-trang__tieu-de" id="k2">2. Xử lý – Tiếp nhận &amp; phân công</h2>
+        <% if (coHD('phanCong')) { %>
+        <form method="post" action="/quan-ly/yeu-cau/<%= yc.id %>/phan-cong" class="form-ql">
+          <%- include('_chon-ktv', { tien: 'pc', goiY, chon: gt('phan-cong', 'ktv_id', ktvMacDinh), boQua: null, loi: loi('phan-cong', 'ktv_id') }) %>
+          <div class="luoi-2">
+            <div class="truong <%= loi('phan-cong', 'han') ? 'co-loi' : '' %>">
+              <label class="nhan" for="pc-han">Hạn kiểm tra <span class="bat-buoc">*</span></label>
+              <input class="o-nhap" type="datetime-local" id="pc-han" name="han" required min="<%= hanToiThieu %>" value="<%= gt('phan-cong', 'han', hanMacDinh) %>">
+              <% if (loi('phan-cong', 'han')) { %><p class="loi-truong"><%= loi('phan-cong', 'han') %></p><% } %>
+              <p class="goi-y"><%= hanGoiY %></p>
+            </div>
+            <div class="truong <%= loi('phan-cong', 'ghi_chu_giao_viec') ? 'co-loi' : '' %>">
+              <label class="nhan" for="pc-gc">Ghi chú giao việc</label>
+              <input class="o-nhap" id="pc-gc" name="ghi_chu_giao_viec" maxlength="1000" value="<%= gt('phan-cong', 'ghi_chu_giao_viec', '') %>" placeholder="Ví dụ: mang theo bóng đèn dự phòng">
+              <% if (loi('phan-cong', 'ghi_chu_giao_viec')) { %><p class="loi-truong"><%= loi('phan-cong', 'ghi_chu_giao_viec') %></p><% } %>
+            </div>
+          </div>
+          <div class="truong <%= loi('phan-cong', 'ghi_chu_sv') ? 'co-loi' : '' %>">
+            <label class="nhan" for="pc-sv">Ghi chú cho sinh viên</label>
+            <input class="o-nhap" id="pc-sv" name="ghi_chu_sv" maxlength="1000" value="<%= gt('phan-cong', 'ghi_chu_sv', '') %>" placeholder="Ví dụ: Đã tiếp nhận, KTV sẽ kiểm tra trong buổi sáng.">
+            <% if (loi('phan-cong', 'ghi_chu_sv')) { %><p class="loi-truong"><%= loi('phan-cong', 'ghi_chu_sv') %></p><% } %>
+          </div>
+          <div class="hang-nut">
+            <button type="submit" class="nut-xanh" <%= goiY.length ? '' : 'disabled' %>>Tiếp nhận &amp; phân công</button>
+            <% if (coHD('tuChoi')) { %><button type="button" class="nut-vien-do" data-mo="hop-tu-choi">Từ chối…</button><% } %>
+          </div>
+        </form>
+        <% } %>
+
+      <% } else if (tt === 'DA_PHAN_CONG') { %>
+        <h2 class="the-trang__tieu-de" id="k2">2. Xử lý – Đã phân công</h2>
+        <dl class="dong-tt">
+          <dt>KTV hiện tại</dt><dd><b><%= pc ? pc.ten_ktv : '–' %></b></dd>
+          <% if (pc) { %>
+          <dt>Giao lúc</dt><dd><%= dinhDang(pc.thoi_gian_giao) %></dd>
+          <dt>Hạn kiểm tra</dt><dd><%= dinhDang(pc.han_hoan_thanh) %><% if (quaHan) { %> <span class="qua-han">Quá hạn</span><% } %></dd>
+          <% if (pc.ghi_chu_giao_viec) { %><dt>Ghi chú giao việc</dt><dd class="xuong-dong"><%= pc.ghi_chu_giao_viec %></dd><% } %>
+          <% } %>
+        </dl>
+        <% if (coHD('doiKtv')) { %>
+        <div class="hang-nut"><button type="button" class="nut-xanh" data-mo="hop-doi-ktv">Đổi KTV</button></div>
+        <% } %>
+
+      <% } else if (tt === 'DANG_SUA') { %>
+        <h2 class="the-trang__tieu-de" id="k2">2. Xử lý – Đang xử lý</h2>
+        <dl class="dong-tt">
+          <dt>KTV</dt><dd><b><%= pc ? pc.ten_ktv : '–' %></b></dd>
+          <% if (batDauLuc) { %><dt>Bắt đầu kiểm tra</dt><dd><%= dinhDang(batDauLuc) %></dd><% } %>
+          <% if (pc) { %><dt>Hạn kiểm tra</dt><dd><%= dinhDang(pc.han_hoan_thanh) %><% if (quaHan) { %> <span class="qua-han">Quá hạn</span><% } %></dd><% } %>
+        </dl>
+        <p class="goi-y">KTV đang kiểm tra, sửa chữa. Quản lý chỉ xem và có thể cập nhật ghi chú cho sinh viên.</p>
+        <% if (suaGhiChuSv) { %>
+        <form method="post" action="/quan-ly/yeu-cau/<%= yc.id %>/ghi-chu-sv" class="form-ql">
+          <div class="truong <%= loi('ghi-chu-sv', 'ghi_chu_sv') ? 'co-loi' : '' %>">
+            <label class="nhan" for="gc-sv">Ghi chú cho sinh viên</label>
+            <input class="o-nhap" id="gc-sv" name="ghi_chu_sv" maxlength="1000" required value="<%= gt('ghi-chu-sv', 'ghi_chu_sv', yc.ghi_chu_ql || '') %>">
+            <% if (loi('ghi-chu-sv', 'ghi_chu_sv')) { %><p class="loi-truong"><%= loi('ghi-chu-sv', 'ghi_chu_sv') %></p><% } %>
+          </div>
+          <div class="hang-nut"><button type="submit" class="nut-xanh">Cập nhật ghi chú</button></div>
+        </form>
+        <% } %>
+
+      <% } else if (tt === 'CHO_NGHIEM_THU' && yc.ket_qua_kiem_tra === 'KHAC_PHUC_TAI_CHO') { %>
+        <h2 class="the-trang__tieu-de" id="k2">2. Xử lý – Nghiệm thu kết quả sửa chữa</h2>
+        <dl class="dong-tt">
+          <dt>Kết quả</dt><dd><b class="chu-xanh-la"><%= ketQuaKiemTra.KHAC_PHUC_TAI_CHO %></b></dd>
+          <dt>KTV báo</dt><dd><%= pc ? pc.ten_ktv : '–' %><%= baoKetQuaLuc ? ' · ' + dinhDang(baoKetQuaLuc) : '' %></dd>
+        </dl>
+        <h3 class="khoi__tieu-de-nho">Nội dung sửa chữa (M.01 phần II)</h3>
+        <div class="cuon-ngang">
+          <table class="bang bang--don">
+            <thead><tr><th>STT</th><th>Nội dung sửa chữa</th><th>Số lượng</th><th>Ghi chú</th></tr></thead>
+            <tbody>
+              <% noiDungSua.forEach(function (d) { %>
+              <tr><td><%= d.stt %></td><td><%= d.noi_dung %></td><td><%= d.so_luong == null ? '' : d.so_luong %></td><td><%= d.ghi_chu || '' %></td></tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+        <% if (anhSau.length) { %>
+        <h3 class="khoi__tieu-de-nho">Ảnh sau sửa</h3>
+        <ul class="luoi-anh luoi-anh--nho">
+          <% anhSau.forEach(function (a, i) { %>
+          <li><button type="button" class="anh-bam" data-anh="<%= a %>" aria-label="Phóng to ảnh sau sửa <%= i + 1 %>"><img src="<%= a %>" alt="Ảnh sau sửa <%= i + 1 %>" loading="lazy"></button></li>
+          <% }) %>
+        </ul>
+        <% } %>
+        <div class="hang-nut">
+          <% if (coHD('nghiemThu')) { %><button type="button" class="nut-xanh" data-mo="hop-nghiem-thu">Nghiệm thu đạt</button><% } %>
+          <% if (coHD('lamLai')) { %><button type="button" class="nut-vien-xam" data-mo="hop-lam-lai">Yêu cầu làm lại…</button><% } %>
+        </div>
+
+      <% } else if (tt === 'CHO_NGHIEM_THU') { %>
+        <h2 class="the-trang__tieu-de" id="k2">2. Biên bản kiểm tra kỹ thuật (M.04)<%= bb ? ' – KTV lập ' + dinhDang(bb.thoi_gian) : '' %></h2>
+        <% if (bb) { %>
+        <dl class="dong-tt">
+          <dt>Kết quả</dt><dd><b class="chu-cam"><%= ketQuaKiemTra.KHONG_KHAC_PHUC %></b></dd>
+          <dt>KTV lập</dt><dd><%= bb.ten_ktv %></dd>
+          <dt>Tình trạng sự cố</dt><dd class="xuong-dong"><%= bb.tinh_trang_su_co %></dd>
+          <dt>Nguyên nhân</dt><dd class="xuong-dong"><%= bb.nguyen_nhan %></dd>
+          <dt>Biện pháp đề nghị</dt>
+          <dd>
+            <ul class="ds-de-xuat">
+              <% [['Mua vật tư thay thế', bb.de_xuat_mua_vat_tu], ['Thuê đơn vị sửa chữa', bb.de_xuat_thue_sua], ['Hỏng, đề nghị thanh lý', bb.de_xuat_thanh_ly]].forEach(function (x) { %>
+              <li class="<%= x[1] ? 'co' : '' %>"><span class="o-danh-dau" aria-hidden="true"><%= x[1] ? '✓' : '' %></span><span><span class="an-di"><%= x[1] ? 'Có đề nghị:' : 'Không đề nghị:' %></span> <b><%= x[0] %></b><%= x[1] ? ': ' + x[1] : '' %></span></li>
+              <% }) %>
+            </ul>
+          </dd>
+          <dt>Còn bảo hành</dt><dd><%= bb.con_bao_hanh ? 'Có' : 'Không' %></dd>
+        </dl>
+        <% } else { %>
+        <p class="thong-bao thong-bao--loi">Chưa có biên bản kiểm tra kỹ thuật đang hiệu lực.</p>
+        <% } %>
+        <% if (coHD('chuyenPhuongAn')) { %>
+        <form method="post" action="/quan-ly/yeu-cau/<%= yc.id %>/chuyen-phuong-an" class="form-ql phan-cach">
+          <div class="luoi-2">
+            <div class="truong <%= loi('chuyen-phuong-an', 'phuong_an') ? 'co-loi' : '' %>">
+              <label class="nhan" for="pa">Phương án <span class="bat-buoc">*</span></label>
+              <select class="o-nhap" id="pa" name="phuong_an" required>
+                <option value="">– Chọn phương án –</option>
+                <% Object.keys(phuongAn).forEach(function (k) { %>
+                <option value="<%= k %>" <%= gt('chuyen-phuong-an', 'phuong_an', paGoiY) === k ? 'selected' : '' %>><%= phuongAn[k] %></option>
+                <% }) %>
+              </select>
+              <% if (loi('chuyen-phuong-an', 'phuong_an')) { %><p class="loi-truong"><%= loi('chuyen-phuong-an', 'phuong_an') %></p><% } %>
+            </div>
+            <div class="truong <%= loi('chuyen-phuong-an', 'so_to_trinh') ? 'co-loi' : '' %>">
+              <label class="nhan" for="stt">Số tờ trình (M.06)</label>
+              <input class="o-nhap" id="stt" name="so_to_trinh" maxlength="100" value="<%= gt('chuyen-phuong-an', 'so_to_trinh', '') %>" placeholder="Ví dụ: 45/TTr-QT">
+              <% if (loi('chuyen-phuong-an', 'so_to_trinh')) { %><p class="loi-truong"><%= loi('chuyen-phuong-an', 'so_to_trinh') %></p><% } %>
+            </div>
+          </div>
+          <div class="hang-nut">
+            <button type="submit" class="nut-nau">Duyệt biên bản &amp; chuyển phương án</button>
+            <% if (coHD('lamLai')) { %><button type="button" class="nut-vien-xam" data-mo="hop-lam-lai">Yêu cầu làm lại…</button><% } %>
+          </div>
+        </form>
+        <% } %>
+
+      <% } else if (tt === 'CHUYEN_XU_LY') { %>
+        <h2 class="the-trang__tieu-de" id="k2">2. Xử lý – Chuyển xử lý theo phương án</h2>
+        <dl class="dong-tt">
+          <dt>Phương án</dt><dd><b class="chu-cam"><%= phuongAn[yc.phuong_an] || '–' %></b></dd>
+          <dt>Số tờ trình (M.06)</dt><dd><%= yc.so_to_trinh || '–' %></dd>
+          <% if (bb) { %>
+          <dt>Biên bản M.04</dt><dd><%= bb.ten_ktv %> lập <%= dinhDang(bb.thoi_gian) %>. Nguyên nhân: <%= bb.nguyen_nhan %></dd>
+          <% } %>
+        </dl>
+        <% if (coHD('dong')) { %>
+        <form method="post" action="/quan-ly/yeu-cau/<%= yc.id %>/dong" class="form-ql phan-cach">
+          <div class="truong <%= loi('dong', 'ket_qua_cuoi') ? 'co-loi' : '' %>">
+            <label class="nhan" for="kqc">Kết quả xử lý <span class="bat-buoc">*</span></label>
+            <textarea class="o-nhap" id="kqc" name="ket_qua_cuoi" rows="3" maxlength="1000" required placeholder="Ví dụ: Đơn vị sửa đã thay block máy nén, điều hòa chạy bình thường."><%= gt('dong', 'ket_qua_cuoi', '') %></textarea>
+            <% if (loi('dong', 'ket_qua_cuoi')) { %><p class="loi-truong"><%= loi('dong', 'ket_qua_cuoi') %></p><% } %>
+          </div>
+          <div class="luoi-2">
+            <div class="truong <%= loi('dong', 'so_bien_ban_ban_giao') ? 'co-loi' : '' %>">
+              <label class="nhan" for="m10">Số biên bản bàn giao, nghiệm thu (M.10)</label>
+              <input class="o-nhap" id="m10" name="so_bien_ban_ban_giao" maxlength="100" value="<%= gt('dong', 'so_bien_ban_ban_giao', '') %>" placeholder="Nếu có">
+            </div>
+            <% if (yc.thiet_bi_id) { %>
+            <fieldset class="truong nhom-chon <%= loi('dong', 'tinh_trang_thiet_bi') ? 'co-loi' : '' %>">
+              <legend class="nhan">Tình trạng thiết bị sau cùng <span class="bat-buoc">*</span></legend>
+              <div class="chon-muc-do">
+                <% tinhTrangSauCung.forEach(function (k) { %>
+                <label class="the-chon"><input type="radio" name="tinh_trang_thiet_bi" value="<%= k %>" required <%= gt('dong', 'tinh_trang_thiet_bi', '') === k ? 'checked' : '' %>> <%= k === 'HOAT_DONG' ? 'Hoạt động (đã sửa / thay)' : tinhTrangTB[k] %></label>
+                <% }) %>
+              </div>
+              <% if (loi('dong', 'tinh_trang_thiet_bi')) { %><p class="loi-truong"><%= loi('dong', 'tinh_trang_thiet_bi') %></p><% } %>
+            </fieldset>
+            <% } %>
+          </div>
+          <div class="hang-nut"><button type="submit" class="nut-xanh">Đóng yêu cầu</button></div>
+        </form>
+        <% } %>
+
+      <% } else { %>
+        <h2 class="the-trang__tieu-de" id="k2">2. Kết quả xử lý</h2>
+        <dl class="dong-tt">
+          <% if (tt === 'HOAN_THANH') { %>
+          <dt>Hoàn thành lúc</dt><dd><%= dinhDang(yc.thoi_gian_hoan_thanh) %></dd>
+          <% if (yc.ket_qua_kiem_tra) { %><dt>Kết quả kiểm tra</dt><dd><%= ketQuaKiemTra[yc.ket_qua_kiem_tra] %></dd><% } %>
+          <% if (pc) { %><dt>KTV</dt><dd><%= pc.ten_ktv %></dd><% } %>
+          <% if (yc.phuong_an) { %><dt>Phương án</dt><dd><%= phuongAn[yc.phuong_an] %><%= yc.so_to_trinh ? ' · Tờ trình ' + yc.so_to_trinh : '' %></dd><% } %>
+          <% if (yc.ket_qua_cuoi) { %><dt>Kết quả xử lý</dt><dd class="xuong-dong"><%= yc.ket_qua_cuoi %></dd><% } %>
+          <% if (yc.so_bien_ban_ban_giao) { %><dt>Biên bản M.10</dt><dd><%= yc.so_bien_ban_ban_giao %></dd><% } %>
+          <% } else if (tt === 'TU_CHOI') { %>
+          <dt>Lý do từ chối</dt><dd class="xuong-dong"><%= yc.ly_do_tu_choi %></dd>
+          <% } else { %>
+          <dt>Trạng thái</dt><dd>Sinh viên đã hủy yêu cầu.</dd>
+          <% } %>
+        </dl>
+        <% if (tt === 'HOAN_THANH' && noiDungSua.length) { %>
+        <h3 class="khoi__tieu-de-nho">Nội dung sửa chữa (M.01 phần II)</h3>
+        <div class="cuon-ngang">
+          <table class="bang bang--don">
+            <thead><tr><th>STT</th><th>Nội dung sửa chữa</th><th>Số lượng</th><th>Ghi chú</th></tr></thead>
+            <tbody>
+              <% noiDungSua.forEach(function (d) { %>
+              <tr><td><%= d.stt %></td><td><%= d.noi_dung %></td><td><%= d.so_luong == null ? '' : d.so_luong %></td><td><%= d.ghi_chu || '' %></td></tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+        <% } %>
+        <% if (tt === 'HOAN_THANH' && anhSau.length) { %>
+        <h3 class="khoi__tieu-de-nho">Ảnh sau sửa</h3>
+        <ul class="luoi-anh luoi-anh--nho">
+          <% anhSau.forEach(function (a, i) { %>
+          <li><button type="button" class="anh-bam" data-anh="<%= a %>" aria-label="Phóng to ảnh sau sửa <%= i + 1 %>"><img src="<%= a %>" alt="Ảnh sau sửa <%= i + 1 %>" loading="lazy"></button></li>
+          <% }) %>
+        </ul>
+        <% } %>
+        <p class="goi-y">Yêu cầu đã kết thúc – chỉ xem.</p>
+      <% } %>
+    </section>
+  </div>
+
+  <!-- ======================================================= 3. Lịch sử xử lý -->
+  <section class="the-trang" aria-labelledby="k3">
+    <h2 class="the-trang__tieu-de" id="k3">3. Lịch sử xử lý</h2>
+    <table class="bang bang--the bang-ql">
+      <thead><tr><th>Thời gian</th><th>Người thực hiện</th><th>Thao tác</th><th>Nội dung</th></tr></thead>
+      <tbody>
+        <% lichSu.forEach(function (h) { %>
+        <tr>
+          <td data-nhan="Thời gian" class="khong-xuong-dong"><%= dinhDang(h.thoiGian) %></td>
+          <td data-nhan="Người thực hiện"><%= h.nguoi %></td>
+          <td data-nhan="Thao tác"><%= h.thaoTac %></td>
+          <td data-nhan="Nội dung"><%= h.noiDung && h.noiDung !== h.thaoTac ? h.noiDung + ' ' : '' %><span class="chu-phu-nho">→ <%= h.den %></span></td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </section>
+</main>
+
+<!-- ======================================================= Hộp thoại -->
+<dialog class="hop-thoai hop-thoai--anh" id="hop-anh" aria-label="Xem ảnh phóng to">
+  <button type="button" class="hop-thoai__dong" data-dong aria-label="Đóng">✕</button>
+  <img id="hop-anh-hinh" alt="">
+</dialog>
+
+<% if (coHD('tuChoi')) { %>
+<dialog class="hop-thoai" id="hop-tu-choi" aria-labelledby="hop-tu-choi-td" <%- moSan('tu-choi') %>>
+  <form method="post" action="/quan-ly/yeu-cau/<%= yc.id %>/tu-choi">
+    <button type="button" class="hop-thoai__dong" data-dong aria-label="Đóng">✕</button>
+    <h2 class="hop-thoai__tieu-de" id="hop-tu-choi-td">Từ chối yêu cầu <%= yc.ma_yeu_cau %></h2>
+    <div class="truong <%= loi('tu-choi', 'ly_do') ? 'co-loi' : '' %>">
+      <label class="nhan" for="tc-ly-do">Lý do từ chối <span class="bat-buoc">*</span></label>
+      <textarea class="o-nhap" id="tc-ly-do" name="ly_do" rows="3" required minlength="<%= lyDoToiThieu %>" maxlength="1000" placeholder="Ví dụ: Trùng với yêu cầu YC-2026-0010"><%= gt('tu-choi', 'ly_do', '') %></textarea>
+      <% if (loi('tu-choi', 'ly_do')) { %><p class="loi-truong"><%= loi('tu-choi', 'ly_do') %></p><% } %>
+      <p class="goi-y">Bắt buộc, ít nhất <%= lyDoToiThieu %> ký tự. Sinh viên sẽ thấy lý do này.</p>
+    </div>
+    <div class="hop-thoai__nut">
+      <button type="button" class="nut-vien-xam" data-dong>Hủy</button>
+      <button type="submit" class="nut-do">Từ chối yêu cầu</button>
+    </div>
+  </form>
+</dialog>
+<% } %>
+
+<% if (coHD('doiKtv')) { %>
+<dialog class="hop-thoai hop-thoai--rong" id="hop-doi-ktv" aria-labelledby="hop-doi-ktv-td" <%- moSan('doi-ktv') %>>
+  <form method="post" action="/quan-ly/yeu-cau/<%= yc.id %>/doi-ktv">
+    <button type="button" class="hop-thoai__dong" data-dong aria-label="Đóng">✕</button>
+    <h2 class="hop-thoai__tieu-de" id="hop-doi-ktv-td">Đổi KTV cho <%= yc.ma_yeu_cau %></h2>
+    <%- include('_chon-ktv', { tien: 'dk', goiY, chon: gt('doi-ktv', 'ktv_id', (goiY.find(function (k) { return !pc || k.id !== pc.ktv_id; }) || {}).id), boQua: pc ? pc.ktv_id : null, loi: loi('doi-ktv', 'ktv_id') }) %>
+    <div class="luoi-2">
+      <div class="truong <%= loi('doi-ktv', 'han') ? 'co-loi' : '' %>">
+        <label class="nhan" for="dk-han">Hạn kiểm tra</label>
+        <input class="o-nhap" type="datetime-local" id="dk-han" name="han" min="<%= hanToiThieu %>" value="<%= gt('doi-ktv', 'han', hanMacDinh) %>">
+        <% if (loi('doi-ktv', 'han')) { %><p class="loi-truong"><%= loi('doi-ktv', 'han') %></p><% } %>
+        <p class="goi-y"><%= hanGoiY %></p>
+      </div>
+      <div class="truong">
+        <label class="nhan" for="dk-gc">Ghi chú / lý do đổi</label>
+        <input class="o-nhap" id="dk-gc" name="ghi_chu_giao_viec" maxlength="1000" value="<%= gt('doi-ktv', 'ghi_chu_giao_viec', '') %>">
+      </div>
+    </div>
+    <div class="hop-thoai__nut">
+      <button type="button" class="nut-vien-xam" data-dong>Hủy</button>
+      <button type="submit" class="nut-xanh">Đổi KTV</button>
+    </div>
+  </form>
+</dialog>
+<% } %>
+
+<% if (coHD('nghiemThu')) { %>
+<dialog class="hop-thoai" id="hop-nghiem-thu" aria-labelledby="hop-nt-td">
+  <form method="post" action="/quan-ly/yeu-cau/<%= yc.id %>/nghiem-thu">
+    <button type="button" class="hop-thoai__dong" data-dong aria-label="Đóng">✕</button>
+    <h2 class="hop-thoai__tieu-de" id="hop-nt-td">Nghiệm thu đạt?</h2>
+    <p>Xác nhận kết quả sửa chữa của yêu cầu <b><%= yc.ma_yeu_cau %></b> đạt. Yêu cầu chuyển sang <b>Hoàn thành</b><%= yc.thiet_bi_id ? ', thiết bị về "Hoạt động"' : '' %>.</p>
+    <div class="hop-thoai__nut">
+      <button type="button" class="nut-vien-xam" data-dong>Quay lại</button>
+      <button type="submit" class="nut-xanh">Nghiệm thu đạt</button>
+    </div>
+  </form>
+</dialog>
+<% } %>
+
+<% if (coHD('lamLai')) { %>
+<dialog class="hop-thoai hop-thoai--rong" id="hop-lam-lai" aria-labelledby="hop-ll-td" <%- moSan('lam-lai') %>>
+  <form method="post" action="/quan-ly/yeu-cau/<%= yc.id %>/lam-lai">
+    <button type="button" class="hop-thoai__dong" data-dong aria-label="Đóng">✕</button>
+    <h2 class="hop-thoai__tieu-de" id="hop-ll-td">Yêu cầu làm lại <%= yc.ma_yeu_cau %></h2>
+    <div class="truong <%= loi('lam-lai', 'ly_do') ? 'co-loi' : '' %>">
+      <label class="nhan" for="ll-ly-do">Lý do <span class="bat-buoc">*</span></label>
+      <textarea class="o-nhap" id="ll-ly-do" name="ly_do" rows="3" required minlength="<%= lyDoToiThieu %>" maxlength="1000" placeholder="Ví dụ: Hình vẫn mờ, chưa căn chỉnh tiêu cự"><%= gt('lam-lai', 'ly_do', '') %></textarea>
+      <% if (loi('lam-lai', 'ly_do')) { %><p class="loi-truong"><%= loi('lam-lai', 'ly_do') %></p><% } %>
+      <p class="goi-y">Bắt buộc, ít nhất <%= lyDoToiThieu %> ký tự.</p>
+    </div>
+    <%- include('_chon-ktv', { tien: 'll', goiY, chon: gt('lam-lai', 'ktv_id', pc ? pc.ktv_id : ktvMacDinh), boQua: null, loi: loi('lam-lai', 'ktv_id') }) %>
+    <p class="goi-y">Mặc định giao lại KTV cũ<%= pc ? ' (' + pc.ten_ktv + ')' : '' %>.</p>
+    <div class="truong <%= loi('lam-lai', 'han') ? 'co-loi' : '' %>">
+      <label class="nhan" for="ll-han">Hạn kiểm tra</label>
+      <input class="o-nhap" type="datetime-local" id="ll-han" name="han" min="<%= hanToiThieu %>" value="<%= gt('lam-lai', 'han', hanMacDinh) %>">
+      <% if (loi('lam-lai', 'han')) { %><p class="loi-truong"><%= loi('lam-lai', 'han') %></p><% } %>
+    </div>
+    <div class="hop-thoai__nut">
+      <button type="button" class="nut-vien-xam" data-dong>Hủy</button>
+      <button type="submit" class="nut-xanh">Yêu cầu làm lại</button>
+    </div>
+  </form>
+</dialog>
+<% } %>
+<script src="/public/js/chi-tiet-ql.js"></script>
+<%- include('../partials/foot') %>

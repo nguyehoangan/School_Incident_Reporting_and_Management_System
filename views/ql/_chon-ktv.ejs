@@ -1,0 +1,17 @@
+<%# Danh sách KTV theo gợi ý mục 7.3. Tham số: tien (tiền tố id), goiY, chon (id đang chọn), boQua (id không chọn được), loi %>
+<fieldset class="chon-ktv <%= loi ? 'co-loi' : '' %>">
+  <legend class="nhan">Kỹ thuật viên <span class="bat-buoc">*</span></legend>
+  <% if (!goiY.length) { %>
+  <p class="loi-truong">Chưa có kỹ thuật viên nào đang hoạt động.</p>
+  <% } %>
+  <% goiY.forEach(function (k) { const tat = boQua && boQua === k.id; %>
+  <label class="chon-ktv__dong <%= tat ? 'chon-ktv__dong--tat' : '' %>" for="<%= tien %>-ktv-<%= k.id %>">
+    <input type="radio" id="<%= tien %>-ktv-<%= k.id %>" name="ktv_id" value="<%= k.id %>" required
+           <%= String(chon) === String(k.id) ? 'checked' : '' %> <%= tat ? 'disabled' : '' %>>
+    <span class="chon-ktv__ten"><%= k.hoTen %></span>
+    <span class="chon-ktv__mo-ta"><%= k.moTa %><%= tat ? ' · đang được giao' : '' %></span>
+    <% if (k.goiY) { %><span class="nhan-tt nhan-tt--xanh-la">Gợi ý</span><% } %>
+  </label>
+  <% }) %>
+  <% if (loi) { %><p class="loi-truong"><%= loi %></p><% } %>
+</fieldset>
