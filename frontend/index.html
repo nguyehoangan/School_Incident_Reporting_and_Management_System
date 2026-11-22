@@ -61,40 +61,67 @@
     </label>
     <a class="forgot" href="#login" id="forgot">Quên mật khẩu?</a>
     <button class="btn-red btn-block" type="submit">Đăng nhập</button>
-    <p class="demo-note" id="lgNote">Bản demo: nhập tài khoản và mật khẩu bất kỳ. <a href="#splash" style="color:var(--red-btn)">← Về trang giới thiệu</a></p>
+    <p class="demo-note" id="lgNote">Tài khoản do nhà trường cấp, không có đăng ký. <a href="#splash" style="color:var(--red-btn)">← Về trang giới thiệu</a></p>
+    <details class="demo-acc"><summary>Tài khoản demo (xóa khi có backend)</summary>
+      <table><tr><td>sv01</td><td>123456</td><td>Sinh viên</td></tr><tr><td>gv01</td><td>123456</td><td>Giảng viên (không liên quan)</td></tr>
+      <tr><td>qtvt01</td><td>123456</td><td>Admin – P.QT&amp;VT (tiếp nhận, phân công, nghiệm thu)</td></tr>
+      <tr><td>bgh01</td><td>123456</td><td>Admin – Ban Giám hiệu (phê duyệt)</td></tr>
+      <tr><td>tckt01</td><td>123456</td><td>Admin – P.TCKT (thanh toán, lưu hồ sơ)</td></tr>
+      <tr><td>tho01</td><td>123456</td><td>Thợ sửa</td></tr><tr><td>tho02</td><td>123456</td><td>Thợ sửa</td></tr></table></details>
   </form>
 </section>
 
 <!-- ================= MAIN SHELL ================= -->
 <div id="shell" class="view" hidden>
   <div class="topbar"><div class="in gut">
-    <a href="#home">Trang chủ</a><a href="#home">Thông báo</a><a href="#home">Lịch bảo trì</a><a href="#home">Hỏi đáp</a>
+    <a href="#home">Trang chủ</a><a href="#home">Hỏi đáp</a>
     <span class="lg2"><b>EN</b><b class="on">VI</b></span>
   </div></div>
   <header class="mainbar"><div class="in gut">
     <a class="bk-logo-link" href="#home" aria-label="Trang chủ"><img class="bk-logo" src="assets/img/logoBK.webp" alt="Logo Đại học Bách khoa Hà Nội"></a>
     <div class="mb-name"><b>ĐẠI HỌC BÁCH KHOA HÀ NỘI</b><small>Hệ thống báo cáo &amp; sửa chữa trang thiết bị</small></div>
     <button class="burger" id="burger" aria-label="Mở menu" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
-    <ul class="menu" id="menu">
-      <li><button type="button">Thiết bị <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m6 9 6 6 6-6"/></svg></button>
-        <ul class="sub"><li><a href="#home">Danh mục thiết bị</a></li><li><a href="#home">Thiết bị theo phòng</a></li></ul></li>
+    <ul class="menu" id="menu" data-role="user">
       <li><a href="#home">Phòng học</a></li>
-      <li><a href="#home">Biểu mẫu</a></li>
-      <li><a href="#home">Bảo trì định kỳ</a></li>
       <li><button type="button">Phiếu của tôi (<span id="myCount">0</span>) <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m6 9 6 6 6-6"/></svg></button>
-        <ul class="sub"><li><a href="#home">Đang chờ xử lý</a></li><li><a href="#home">Đã hoàn thành</a></li></ul></li>
-      <li><a href="#home">Thống kê</a></li>
+        <ul class="sub"><li><a href="#phieu-da-gui" data-filter="PENDING">Đang chờ xử lý</a></li><li><a href="#phieu-da-gui" data-filter="FULFILLED">Đã hoàn thành</a></li></ul></li>
       <li id="supportItem"><button type="button" id="supportBtn" aria-haspopup="true">Hỗ trợ <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m6 9 6 6 6-6"/></svg></button>
         <ul class="sub">
-          <li><a href="#yeu-cau-xu-ly"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.5-.5-.5-2.5z"/></svg>Yêu cầu xử lý sự cố <span class="new">Mới</span></a></li>
-          <li><a href="#home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>Tra cứu phiếu yêu cầu</a></li>
-          <li><a href="#home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.7M12 17h.01"/></svg>Hướng dẫn sử dụng</a></li>
+          <li><a href="#phieu-da-gui" data-filter="ALL"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>Tra cứu phiếu yêu cầu</a></li>
+          <li><a href="#huong-dan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.7M12 17h.01"/></svg>Hướng dẫn sử dụng</a></li>
         </ul></li>
     </ul>
+    <ul class="menu" id="menuAdmin" data-role="admin" hidden>
+      <li><a href="#st-home">Tổng quan</a></li>
+      <li><a href="#st-tickets/ALL">Tất cả phiếu</a></li>
+      <li><a href="#st-tickets/PENDING">Chờ tiếp nhận</a></li>
+      <li><a href="#st-tickets/WAIT_APPROVAL">Chờ phê duyệt</a></li>
+      <li><a href="#st-tickets/WAIT_ACCEPT">Chờ nghiệm thu</a></li>
+    </ul>
+    <ul class="menu" id="menuTech" data-role="tech" hidden>
+      <li><a href="#st-home">Việc của tôi</a></li>
+      <li><a href="#st-tickets/ASSIGNED">Mới được giao</a></li>
+      <li><a href="#st-tickets/IN_PROGRESS">Đang xử lý</a></li>
+      <li><a href="#st-tickets/FULFILLED">Đã hoàn thành</a></li>
+    </ul>
     <div class="icons">
-      <button class="bell" aria-label="Thông báo"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 22a2.5 2.5 0 0 0 2.4-2h-4.8A2.5 2.5 0 0 0 12 22zm7-6V11a7 7 0 0 0-5.5-6.8V3a1.5 1.5 0 0 0-3 0v1.2A7 7 0 0 0 5 11v5l-2 2v1h18v-1z"/></svg></button>
+      <div class="noti" id="noti">
+  <button class="bell" id="bellBtn" type="button" aria-label="Thông báo" aria-haspopup="true" aria-expanded="false">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 22a2.5 2.5 0 0 0 2.4-2h-4.8A2.5 2.5 0 0 0 12 22zm7-6V11a7 7 0 0 0-5.5-6.8V3a1.5 1.5 0 0 0-3 0v1.2A7 7 0 0 0 5 11v5l-2 2v1h18v-1z"/></svg>
+    <span class="bell-n" id="bellN" hidden>0</span>
+  </button>
+  <div class="noti-pop" id="notiPop" hidden>
+    <div class="noti-h"><button type="button" id="notiClose" aria-label="Đóng">×</button><b>Thông báo</b></div>
+    <div class="noti-tabs" id="notiTabs">
+      <button type="button" class="on" data-t="new">Mới <span class="cnt" id="notiCnt">0</span></button>
+      <button type="button" data-t="all">Tất cả</button>
+      <button type="button" class="mark" id="notiMark">Đánh dấu đã đọc</button>
+    </div>
+    <div class="noti-list" id="notiList"></div>
+  </div>
+</div>
       <div class="avatar"><button id="avBtn" aria-label="Tài khoản" aria-expanded="false"><span id="avInit">A</span></button>
-        <div class="av-menu" id="avMenu" hidden><p><b id="avName">Người dùng</b>Khoa / Đơn vị</p><button id="logout" type="button">Đăng xuất</button></div>
+        <div class="av-menu" id="avMenu" hidden><p><b id="avName">Người dùng</b><span id="avSub">Khoa / Đơn vị</span></p><button id="logout" type="button">Đăng xuất</button></div>
       </div>
     </div>
   </div></header>
@@ -102,12 +129,53 @@
   <main class="content gut">
     <section id="home" hidden>
       <nav class="crumb" aria-label="Breadcrumb"><span class="cur">Trang chủ</span></nav>
-      <div class="blank"></div>
+      <div class="home-wrap">
+        <h2 class="home-title">Bạn cần hỗ trợ gì hôm nay?</h2>
+        <p class="home-sub">Gửi yêu cầu sửa chữa thiết bị hoặc theo dõi tiến độ xử lý các phiếu bạn đã gửi.</p>
+        <div class="home-cards">
+          <a class="hcard" href="#yeu-cau-xu-ly">
+            <span class="hc-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.5-.5-.5-2.5z"/></svg></span>
+            <h3>Gửi thông báo hư hỏng / yêu cầu sửa chữa</h3>
+            <p>Điền phiếu, đính kèm ảnh hiện trạng để Phòng Quản trị và Vật tư tiếp nhận.</p>
+            <span class="hc-go">Gửi ngay <i>→</i></span>
+          </a>
+          <a class="hcard" href="#phieu-da-gui" data-filter="ALL">
+            <span class="hc-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg></span>
+            <h3>Theo dõi yêu cầu đã gửi</h3>
+            <p>Xem trạng thái, tiến trình xử lý và nhận thông báo khi phiếu có cập nhật.</p>
+            <span class="hc-go">Theo dõi <i>→</i></span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section id="st-home" data-role="admin tech" hidden>
+      <nav class="crumb"><span class="cur">Trang chủ</span></nav>
+      <div class="sent">
+        <div class="sent-head"><div><h2 id="stTitle"></h2><p id="stSub"></p></div></div>
+        <div class="stats" id="stStats"></div>
+        <h3 class="sec-h">Cần bạn xử lý</h3>
+        <div class="tk-list" id="stTodo"></div>
+        <div class="empty" id="stTodoEmpty" hidden><b>Không có việc đang chờ bạn.</b><p>Phiếu mới sẽ xuất hiện tại đây.</p></div>
+      </div>
+    </section>
+
+    <section id="st-tickets" data-role="admin tech" hidden>
+      <nav class="crumb"><a href="#st-home">Trang chủ</a>/<span class="cur">Phiếu sự cố</span></nav>
+      <div class="sent" id="stList">
+        <div class="sent-head"><div><h2>Phiếu sự cố</h2><p id="stSummary"></p></div>
+          <label class="sent-search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+          <input class="inp" id="stQ" type="search" placeholder="Tìm theo mã phiếu, vị trí, người gửi" aria-label="Tìm phiếu"></label></div>
+        <div class="chips" id="stChips"></div>
+        <div class="tk-list" id="stRows"></div>
+        <div class="empty" id="stEmpty" hidden><b>Không có phiếu phù hợp.</b></div>
+      </div>
+      <div id="stDetail" hidden></div>
     </section>
 
     <section id="yeu-cau-xu-ly" hidden>
       <nav class="crumb" aria-label="Breadcrumb"><a href="#home">Trang chủ</a>/<span>Hỗ trợ</span>/<span class="cur">Yêu cầu xử lý sự cố</span></nav>
-      <div class="tabs"><a class="on" href="#yeu-cau-xu-ly">Phiếu yêu cầu sửa chữa</a><a href="#home">Phiếu đã gửi</a><a href="#home">Hướng dẫn</a></div>
+      <div class="tabs"><a class="on" href="#yeu-cau-xu-ly">Phiếu yêu cầu sửa chữa</a><a href="#phieu-da-gui" data-filter="ALL">Phiếu đã gửi</a><a href="#huong-dan">Hướng dẫn</a></div>
 
       <form class="sheet" id="reqForm" novalidate>
         <div class="doc-head">
@@ -145,6 +213,7 @@
 
         <div class="meta-grid">
           <label class="fld"><span>Người đề nghị <i class="req-star">*</i></span><input class="inp" id="mName" placeholder="Họ và tên"></label>
+          <label class="fld"><span><span id="mIdLbl">Mã số sinh viên</span> <i class="req-star">*</i></span><input class="inp" id="mId" placeholder="VD: 20230001" autocomplete="off"></label>
           <label class="fld"><span>Số điện thoại <i class="req-star">*</i></span><input class="inp" id="mPhone" inputmode="tel" placeholder="VD: 0912 345 678"></label>
           <label class="fld"><span>Vị trí (tòa nhà – phòng) <i class="req-star">*</i></span><input class="inp" id="mRoom" placeholder="VD: Nhà C1 – P.205"></label>
           <label class="fld"><span>Mức độ ưu tiên</span>
@@ -190,8 +259,88 @@
         <dl id="dList"></dl>
         <div class="actions" style="justify-content:center;border:0;margin-top:0">
           <a class="btn-out" href="#home">Về trang chủ</a>
+          <a class="btn-out" id="viewSent" href="#phieu-da-gui">Xem phiếu đã gửi</a>
           <button class="btn-red" type="button" id="newReq">Gửi phiếu khác</button>
         </div>
+      </div>
+    </section>
+
+    <section id="phieu-da-gui" hidden>
+      <nav class="crumb" aria-label="Breadcrumb"><a href="#home">Trang chủ</a>/<span>Hỗ trợ</span>/<span class="cur">Phiếu đã gửi</span></nav>
+      <div class="tabs"><a href="#yeu-cau-xu-ly">Phiếu yêu cầu sửa chữa</a><a class="on" href="#phieu-da-gui" data-filter="ALL">Phiếu đã gửi</a><a href="#huong-dan">Hướng dẫn</a></div>
+
+      <div class="sent" id="sentList">
+        <div class="sent-head">
+          <div><h2>Phiếu đã gửi</h2><p id="sentSummary"></p></div>
+          <label class="sent-search" id="sentTools"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+            <input class="inp" id="sentQ" type="search" placeholder="Tìm theo mã phiếu, vị trí, thiết bị" aria-label="Tìm phiếu đã gửi"></label>
+        </div>
+        <div class="chips" id="sentChips" role="group" aria-label="Lọc theo trạng thái"></div>
+        <div class="tk-list" id="sentRows"></div>
+        <div class="empty" id="sentEmpty" hidden></div>
+      </div>
+
+      <div id="sentDetail" hidden></div>
+    </section>
+
+    <section id="huong-dan" hidden>
+      <nav class="crumb" aria-label="Breadcrumb"><a href="#home">Trang chủ</a>/<span>Hỗ trợ</span>/<span class="cur">Hướng dẫn</span></nav>
+      <div class="tabs"><a href="#yeu-cau-xu-ly">Phiếu yêu cầu sửa chữa</a><a href="#phieu-da-gui" data-filter="ALL">Phiếu đã gửi</a><a class="on" href="#huong-dan">Hướng dẫn</a></div>
+
+      <div class="guide">
+        <h2>Hướng dẫn gửi yêu cầu sửa chữa</h2>
+        <p class="lead">Khi thiết bị trong phòng học, phòng làm việc hay ký túc xá bị hỏng, bạn gửi phiếu để Phòng Quản trị và Vật tư – Trang thiết bị tiếp nhận và cử kỹ thuật viên xử lý. Một phiếu có thể gồm nhiều thiết bị cùng một vị trí.</p>
+
+        <h3>Gửi một phiếu yêu cầu</h3>
+        <ol class="gsteps">
+          <li><b>Mở biểu mẫu</b><p>Chọn <i>Hỗ trợ</i> trên thanh menu, rồi <i>Yêu cầu xử lý sự cố</i>.</p></li>
+          <li><b>Điền phần đề nghị của đơn vị</b><p>Chọn đơn vị, nhập họ tên, số điện thoại và vị trí (tòa nhà – phòng). Chọn mức ưu tiên phù hợp với tình hình thực tế.</p></li>
+          <li><b>Liệt kê thiết bị cần sửa</b><p>Mỗi thiết bị một dòng: tên thiết bị kèm mã tài sản hoặc vị trí, tình trạng hư hỏng, và ghi chú nếu có. Bấm <i>+ Thêm dòng</i> khi có nhiều thiết bị. Dòng đã có tên thiết bị thì cần mô tả tình trạng hư hỏng.</p></li>
+          <li><b>Đính kèm ảnh hiện trạng</b><p>Kéo thả hoặc chọn ảnh từ máy. Tối đa 6 ảnh, mỗi ảnh không quá 5 MB.</p></li>
+          <li><b>Gửi và ghi lại mã phiếu</b><p>Bấm <i>Gửi yêu cầu</i>. Hệ thống cấp mã phiếu dạng YC-năm-số. Bạn dùng mã này khi cần hỏi lại Phòng Quản trị.</p></li>
+        </ol>
+
+        <h3>Theo dõi phiếu đã gửi</h3>
+        <p class="gp">Mở tab <a class="lnk" href="#phieu-da-gui" data-filter="ALL">Phiếu đã gửi</a> để xem danh sách. Bạn có thể lọc theo trạng thái, tìm theo mã phiếu, vị trí hoặc tên thiết bị. Bấm vào một phiếu để xem lại toàn bộ nội dung đã điền, xem ảnh và in phiếu.</p>
+
+        <h3>Các trạng thái của phiếu</h3>
+        <ol class="flow">
+          <li class="f-pending"><span class="status s-pending">Chờ tiếp nhận</span><p>Phiếu vừa gửi. Phòng Quản trị kiểm tra nội dung yêu cầu.</p></li>
+          <li class="f-assigned"><span class="status s-assigned">Đã phân công</span><p>Phiếu đã được giao cho một kỹ thuật viên.</p></li>
+          <li class="f-progress"><span class="status s-progress">Đang xử lý</span><p>Kỹ thuật viên kiểm tra thực tế và sửa chữa. Nếu cần vật tư, Phòng Quản trị sẽ cấp.</p></li>
+          <li class="f-done"><span class="status s-done">Hoàn thành</span><p>Kỹ thuật viên báo xong và người đề nghị xác nhận đạt yêu cầu. Nếu chưa đạt, bạn phản hồi để phiếu được xử lý lại.</p></li>
+        </ol>
+
+        <h3>Chọn mức ưu tiên</h3>
+        <dl class="gprio">
+          <dt>Bình thường</dt><dd>Thiết bị hỏng nhưng chưa cản trở việc giảng dạy hay làm việc.</dd>
+          <dt>Cần xử lý sớm</dt><dd>Bạn cần thiết bị hoạt động lại trong vòng 2 ngày, ví dụ trước một buổi học đã có lịch.</dd>
+          <dt>Khẩn cấp</dt><dd>Sự cố đang ảnh hưởng trực tiếp tới giảng dạy. Ngoài việc gửi phiếu, hãy gọi hotline 024 3869 2008.</dd>
+        </dl>
+
+        <h3>Để phiếu được xử lý nhanh hơn</h3>
+        <ul class="tips">
+          <li>Ghi mã tài sản hoặc nhãn trên thiết bị, kèm tên phòng và tòa nhà.</li>
+          <li>Mô tả hiện tượng cụ thể: đèn báo nào sáng, tiếng kêu gì, lỗi xuất hiện khi nào.</li>
+          <li>Chụp một ảnh toàn cảnh và một ảnh cận cảnh chỗ hỏng hoặc nhãn thiết bị.</li>
+          <li>Để số điện thoại luôn liên lạc được, kỹ thuật viên sẽ gọi trước khi đến.</li>
+        </ul>
+
+        <h3>Câu hỏi thường gặp</h3>
+        <div class="faqs">
+          <details class="faq"><summary>Tôi cần sửa nhiều thiết bị trong cùng một phòng, có phải gửi nhiều phiếu?</summary><p>Không. Bạn liệt kê mỗi thiết bị một dòng trong cùng một phiếu. Nếu các thiết bị ở phòng khác nhau, hãy gửi phiếu riêng cho từng phòng.</p></details>
+          <details class="faq"><summary>Ảnh tải lên bị từ chối?</summary><p>Hệ thống chỉ nhận tệp ảnh, mỗi ảnh không quá 5 MB và tối đa 6 ảnh cho một phiếu. Bạn có thể chụp lại ở độ phân giải thấp hơn hoặc xóa bớt ảnh.</p></details>
+          <details class="faq"><summary>Tôi muốn bổ sung hoặc sửa thông tin sau khi đã gửi?</summary><p>Liên hệ Phòng Quản trị qua hotline hoặc email, kèm mã phiếu để được hỗ trợ nhanh.</p></details>
+          <details class="faq"><summary>Vì sao tôi không thấy phiếu trên máy khác?</summary><p>Phiên bản hiện tại lưu phiếu ngay trên trình duyệt bạn đang dùng, theo từng tài khoản đăng nhập. Bạn cần dùng đúng máy và đúng tài khoản đã gửi phiếu. Khi hệ thống kết nối máy chủ, phiếu sẽ đồng bộ trên mọi thiết bị.</p></details>
+        </div>
+
+        <div class="gcontact">
+          <div><b>Hotline sự cố</b><span>024 3869 2008 (24/7 với sự cố khẩn)</span></div>
+          <div><b>Email</b><span>quantri@hust.edu.vn</span></div>
+          <div><b>Giờ tiếp nhận</b><span>Thứ 2 – Thứ 6: 7:30 – 17:00<br>Thứ 7: 7:30 – 11:30</span></div>
+          <div><b>Địa chỉ</b><span>Số 1 Đại Cồ Việt, Hai Bà Trưng, Hà Nội</span></div>
+        </div>
+        <div class="actions" style="justify-content:flex-start"><a class="btn-red" href="#yeu-cau-xu-ly">Tạo phiếu yêu cầu</a></div>
       </div>
     </section>
   </main>
@@ -215,6 +364,10 @@
     <div class="gut"><div class="copy">Copyright © 2026 Đại học Bách khoa Hà Nội – Hệ thống báo cáo &amp; sửa chữa trang thiết bị.</div></div>
   </footer>
 </div>
+<dialog class="lb" id="lb" aria-label="Xem ảnh"><img id="lbImg" alt=""><button type="button" id="lbClose" aria-label="Đóng ảnh">×</button></dialog>
+<script src="js/accounts.js"></script>
 <script src="js/app.js"></script>
+<script src="js/staff.js"></script>
+<script src="js/noti.js"></script>
 </body>
 </html>
