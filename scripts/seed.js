@@ -3,14 +3,14 @@
 //
 // Các yêu cầu mẫu được "diễn lại" từng bước (gửi → phân công → ... ) để lịch sử xử lý, phân công,
 // nội dung sửa chữa, biên bản và tình trạng thiết bị luôn khớp với trạng thái cuối (mục 5, 6.3, 7.2).
-// Đây chỉ là dữ liệu mẫu; logic chuyển trạng thái thật của ứng dụng nằm ở services/yeuCau.js (đợt 3).
+// Đây chỉ là dữ liệu mẫu; logic chuyển trạng thái thật của ứng dụng nằm ở services/yeuCau.js.
 
 const fs = require('fs');
 const path = require('path');
 const zlib = require('zlib');
 const bcrypt = require('bcrypt');
 const { DUONG_DAN_CSDL, moCsdl } = require('../db');
-const { gioVN, docGioVN, dinhDang } = require('../lib/thoiGian');
+const { gioVN, dinhDang, hanKiemTraMacDinh: hanMacDinh } = require('../lib/thoiGian');
 const { TRANG_THAI_YEU_CAU, PHUONG_AN } = require('../lib/hangSo');
 
 const MAT_KHAU_DEMO = '123456';
@@ -153,17 +153,6 @@ const YEU_CAU = [
 ];
 
 // ---------------------------------------------------------------- Tiện ích
-// Hạn kiểm tra mặc định (BR-06): Khẩn cấp = cuối ngày giao; Bình thường = 01 ngày làm việc (bỏ T7, CN).
-function hanMacDinh(thoiGianGiao, mucDo) {
-  if (mucDo === 'KHAN_CAP') return thoiGianGiao.slice(0, 10) + ' 23:59:00';
-  const d = docGioVN(thoiGianGiao);
-  let ngay = new Date(d.getTime() + 24 * 3600e3);
-  // thứ trong tuần theo giờ VN
-  const thu = (x) => new Date(x.getTime() + 7 * 3600e3).getUTCDay();
-  while (thu(ngay) === 0 || thu(ngay) === 6) ngay = new Date(ngay.getTime() + 24 * 3600e3);
-  return gioVN(ngay);
-}
-
 // Giờ hành chính cho dữ liệu mẫu (giờ VN): SV gửi trong khoảng 7:00–21:00,
 // QL/KTV xử lý trong 7:30–17:30 các ngày thứ Hai–Sáu.
 const MOT_NGAY = 24 * 3600e3;
