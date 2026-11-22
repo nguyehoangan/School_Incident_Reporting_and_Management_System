@@ -30,4 +30,4 @@ Web cho 3 vai trò: Sinh viên báo hỏng thiết bị, Quản lý tiếp nhậ
 ## Git
 - Commit sau mỗi đợt, message tiếng Việt ngắn gọn mô tả việc đã làm.
 - KHÔNG thêm dòng `Co-Authored-By: Claude` hay "Generated with Claude Code" vào commit / PR.
-- Trước mỗi lần commit, chạy: git config user.name "BonLonTon" && git config user.email "nguyenhoangan0612@gmail.com"
+- Trước mỗi lần commit, chạy: git config user.name "BonLonTon" && git config user.email "114303202+nguyehoangan@users.noreply.github.com"
