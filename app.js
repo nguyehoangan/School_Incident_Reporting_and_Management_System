@@ -47,6 +47,11 @@ app.use((err, req, res, next) => {
   res.status(500).render('loi', { tieuDe: 'Có lỗi xảy ra', thongDiep: 'Vui lòng thử lại sau.' });
 });
 
-app.listen(PORT, () => {
-  console.log(`Đang chạy tại http://localhost:${PORT}`);
-});
+// Chỉ mở cổng khi chạy trực tiếp (npm start); test route nạp app mà không cần mở cổng.
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`Đang chạy tại http://localhost:${PORT}`);
+  });
+}
+
+module.exports = app;
