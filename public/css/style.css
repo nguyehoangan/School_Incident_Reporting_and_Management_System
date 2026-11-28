@@ -706,3 +706,85 @@ body.nen-xam { background: var(--nen-xam); }
 .bang-nhap { table-layout: fixed; }
 .bang-nhap th:nth-child(4), .bang-nhap td:nth-child(4) { width: 27%; }
 .bang-nhap .o-sl { width: 84px; }
+
+/* =====================================================================
+   Màn hình Quản lý đợt 5 (Q03 Bảng phân công, Q04 Danh mục CSVC, Q05 Quản lý KTV)
+   Bám design/mockups/Q03-bang-phan-cong.png, Q04-danh-muc-csvc.png (Q05 cùng phong cách)
+   ===================================================================== */
+.thanh-tieu-de .nut-do { padding: 9px 16px; border-radius: 6px; font-weight: 600; font-size: 14px; text-decoration: none; }
+.nut-do { display: inline-block; text-decoration: none; cursor: pointer; border: 1px solid var(--do-nut); }
+.nut-do:hover { background: var(--do-nut-dam); border-color: var(--do-nut-dam); }
+.hang-nut .nut-do { padding: 8px 20px; border-radius: 6px; font-weight: 600; font-size: 14px; }
+.hang-nut .nut-vien-xam { padding: 8px 20px; border-radius: 6px; font-size: 14px; text-decoration: none; }
+.nhom-nut--phai { justify-content: flex-end; }
+.nhom-nut .nut-vien-xam, .nhom-nut .nut-nho { text-decoration: none; }
+.form-dong { display: inline; margin: 0; }
+.form-dong button { cursor: pointer; }
+.nut-nho { cursor: pointer; border-radius: 6px; border: 1px solid transparent; font-weight: 500; white-space: nowrap; }
+.nut-nho.nut-vien-xam { border-color: #cfd3da; }
+.nut-nho.nut-vien-do { border-color: var(--do-nut); }
+.nut-mo { opacity: .55; }
+.nut-mo:hover { opacity: 1; }
+.tab-ds + .bo-loc-ql, .tab-ds + .bang, .tab-ds + .form-dm { margin-top: 16px; }
+.the-trang > .tab-ds { margin-bottom: 4px; }
+
+/* Bảng QL: hàng ngừng sử dụng / hết hiệu lực mờ đi */
+.bang-q03 td, .bang-tb td { vertical-align: middle; }
+.dong-ngung td { color: #8a8f99; }
+.dong-ngung td b { color: #6b7079; }
+.dong-dang-sua td { background: #f1f5fa; }
+.o-tick { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; }
+.o-tick input { accent-color: var(--xanh-dam); }
+
+/* Chip nhà trong cột "Nhà phụ trách" */
+.chip-nhom { display: inline-flex; gap: 6px; flex-wrap: wrap; }
+.chip-nha { display: inline-block; min-width: 40px; text-align: center; padding: 2px 12px; border: 1px solid #cfd3da; border-radius: 999px; background: #fff; font-size: 13px; }
+
+/* Q03: Xem theo nhà + hộp sửa khu vực */
+.luoi-q03 { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 20px; align-items: start; }
+.luoi-q03 > .the-trang { margin-bottom: 0; }
+.the-trang__tieu-de--lon { font-size: 16px; }
+.dong-canh-bao td { background: #fff6dd; }
+.chu-canh-bao { color: #b42318; font-weight: 700; }
+.luoi-nha-chon { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px 16px; margin: 4px 0 8px; }
+.o-danh-dau-nha { display: flex; align-items: center; gap: 8px; padding: 4px 0; cursor: pointer; }
+.o-danh-dau-nha input { accent-color: var(--xanh-dam); width: 16px; height: 16px; }
+.o-danh-dau-nha small { color: var(--chu-phu); }
+
+/* Form thêm / sửa danh mục, KTV */
+.form-dm { margin: 14px 0 18px; padding: 16px 18px; border: 1px solid var(--vien); border-left: 4px solid var(--xanh-dam); border-radius: 8px; background: #fafbfd; scroll-margin-top: 12px; }
+.form-dm .luoi-form { max-width: 820px; }
+.form-dm .o-nhap { background: #fff; }
+.form-dm .o-nhap[readonly] { background: var(--nen-phu); }
+.form-dm .o-nhap:focus { border-color: var(--xanh-dam); box-shadow: 0 0 0 2px rgba(31, 58, 95, .15); }
+.form-dm .co-loi .o-nhap { border-color: var(--loi-chu); }
+.form-dm .the-trang__tieu-de { margin-bottom: 12px; }
+.form-dm .hang-nut--phai { max-width: 820px; }
+.bo-loc-ql .o-tim { min-width: 200px; }
+
+/* Hồ sơ thiết bị */
+.ho-so-tt { grid-template-columns: repeat(5, minmax(0, 1fr)); margin: 4px 0 18px; }
+.ho-so-tt > div { min-width: 0; }
+.ho-so-tt dt { font-size: 13px; color: var(--chu-phu); }
+.ho-so-tt dd { margin: 0; font-weight: 500; overflow-wrap: anywhere; }
+#ho-so { scroll-margin-top: 12px; }
+
+@media (max-width: 900px) {
+  .luoi-q03 { grid-template-columns: minmax(0, 1fr); }
+  .ho-so-tt { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 640px) {
+  .luoi-nha-chon { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .form-dm { padding: 14px; }
+  .bang--the td.o-nut .nhom-nut { width: 100%; }
+  .bo-loc-ql .o-tick { flex: 1 1 100%; }
+  .thanh-tieu-de .nut-do { width: 100%; text-align: center; }
+  .dong-ngung { background: #fafafa; }
+}
+
+/* Cột nút của bảng danh mục: một hàng, gọn hơn để không xuống dòng như mockup Q04 */
+@media (min-width: 641px) {
+  .bang-ql td.o-nut .nhom-nut { flex-wrap: nowrap; gap: 6px; }
+  .bang-ql td.o-nut .nut-nho { padding: 4px 10px; }
+  .bang-tb th, .bang-tb td { padding-inline: 8px; }
+}

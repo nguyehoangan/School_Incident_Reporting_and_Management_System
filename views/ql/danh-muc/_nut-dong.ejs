@@ -1,0 +1,14 @@
+<%# Nút Ngừng sử dụng / Mở lại / Xóa của một dòng. Tham số: slug, id, dangDung (bool), soYeuCau, nhan (tên hiển thị trong hộp xác nhận), tenNgung %>
+<% const tenNut = typeof tenNgung !== 'undefined' ? tenNgung : 'Ngừng sử dụng'; %>
+<% if (dangDung) { %>
+<form method="post" action="<%= duongHanhDong(slug, id, 'ngung') %>" class="form-dong" data-xac-nhan="<%= tenNut %> <%= nhan %>?">
+  <button type="submit" class="nut-nho nut-vien-xam"><%= tenNut %></button>
+</form>
+<% } else { %>
+<form method="post" action="<%= duongHanhDong(slug, id, 'mo-lai') %>" class="form-dong">
+  <button type="submit" class="nut-nho nut-vien-xam">Mở lại</button>
+</form>
+<% } %>
+<form method="post" action="<%= duongHanhDong(slug, id, 'xoa') %>" class="form-dong" data-xac-nhan="Xóa hẳn <%= nhan %>? Không hoàn tác được.">
+  <button type="submit" class="nut-nho nut-vien-do <%= soYeuCau ? 'nut-mo' : '' %>" <%- soYeuCau ? `title="Đã có ${soYeuCau} yêu cầu tham chiếu – chỉ có thể ngừng sử dụng"` : '' %>>Xóa</button>
+</form>

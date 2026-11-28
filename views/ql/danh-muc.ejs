@@ -1,0 +1,32 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header') %>
+<main class="noi-dung khung">
+  <nav class="vet-dan" aria-label="Vị trí">Quản lý / <span>Danh mục cơ sở vật chất</span></nav>
+  <div class="thanh-tieu-de">
+    <h1 class="tieu-de-trang">Danh mục cơ sở vật chất</h1>
+    <a class="nut-do" href="<%= url({ them: 1 }) %>#form-dm"><%= nhanNutThem %></a>
+  </div>
+
+  <% if (flash) { %>
+  <div class="thong-bao <%= flash.loai === 'ok' ? 'thong-bao--ok' : 'thong-bao--loi' %>" role="<%= flash.loai === 'ok' ? 'status' : 'alert' %>"><%= flash.noiDung %></div>
+  <% } %>
+
+  <section class="the-trang" aria-label="Danh mục">
+    <div class="tab-ds" role="tablist" aria-label="Nhóm danh mục">
+      <% Object.keys(tabs).forEach(function (k) { %>
+      <a class="tab-ds__tab <%= k === tab ? 'dang-chon' : '' %>" role="tab" aria-selected="<%= k === tab %>" href="<%= urlTab(k) %>"><%= tabs[k] %></a>
+      <% }) %>
+    </div>
+
+    <% if (form) { %><%- include('danh-muc/_form') %><% } %>
+
+    <% if (tab === 'nha') { %><%- include('danh-muc/_nha') %>
+    <% } else if (tab === 'phong') { %><%- include('danh-muc/_phong') %>
+    <% } else if (tab === 'loai') { %><%- include('danh-muc/_loai') %>
+    <% } else { %><%- include('danh-muc/_thiet-bi') %><% } %>
+  </section>
+
+  <% if (hoSo) { %><%- include('danh-muc/_ho-so') %><% } %>
+</main>
+<script src="/public/js/ql-chung.js"></script>
+<%- include('../partials/foot') %>

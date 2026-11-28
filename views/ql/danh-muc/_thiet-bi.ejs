@@ -1,0 +1,54 @@
+<form class="bo-loc-ql" method="get" action="/quan-ly/co-so-vat-chat" data-bo-loc>
+  <input type="hidden" name="tab" value="thiet-bi">
+  <label class="an-di" for="loc-nha">Nhà</label>
+  <select class="o-chon" id="loc-nha" name="nha" data-tu-gui>
+    <option value="">Nhà: Tất cả</option>
+    <% dsNhaLoc.forEach(function (n) { %><option value="<%= n.id %>" <%= boLoc.nha === n.id ? 'selected' : '' %>>Nhà: <%= n.ma_nha %></option><% }) %>
+  </select>
+  <label class="an-di" for="loc-phong">Phòng</label>
+  <select class="o-chon" id="loc-phong" name="phong" data-tu-gui>
+    <option value="">Phòng: Tất cả</option>
+    <% dsPhongLoc.forEach(function (p) { %><option value="<%= p.id %>" <%= boLoc.phong === p.id ? 'selected' : '' %>>Phòng: <%= p.ma_nha %>-<%= p.ma_phong %></option><% }) %>
+  </select>
+  <label class="an-di" for="loc-loai">Loại</label>
+  <select class="o-chon" id="loc-loai" name="loai" data-tu-gui>
+    <option value="">Loại: Tất cả</option>
+    <% dsLoaiLoc.forEach(function (l) { %><option value="<%= l.id %>" <%= boLoc.loai === l.id ? 'selected' : '' %>>Loại: <%= l.ten_loai %></option><% }) %>
+  </select>
+  <label class="an-di" for="loc-tt">Tình trạng</label>
+  <select class="o-chon" id="loc-tt" name="tt" data-tu-gui>
+    <option value="">Tình trạng: Tất cả</option>
+    <% Object.keys(tinhTrangTB).forEach(function (k) { %><option value="<%= k %>" <%= boLoc.tt === k ? 'selected' : '' %>>Tình trạng: <%= tinhTrangTB[k] %></option><% }) %>
+  </select>
+  <%- include('_loc-tim', { ghiChu: 'Mã tài sản, tên thiết bị…' }) %>
+  <span class="phan-trang-thanh__tong"><%= thietBi.tong %> thiết bị</span>
+</form>
+<% if (!thietBi.dong.length) { %>
+<div class="trang-rong"><p>Không có thiết bị nào khớp bộ lọc.</p></div>
+<% } else { %>
+<table class="bang bang--the bang-ql bang-tb">
+  <thead>
+    <tr><th>Mã tài sản</th><th>Tên thiết bị</th><th>Loại</th><th>Model – Hãng</th><th>Phòng</th><th>Năm SD</th><th>Tình trạng</th><th>Số lần sửa</th><th><span class="an-di">Thao tác</span></th></tr>
+  </thead>
+  <tbody>
+    <% thietBi.dong.forEach(function (t) { const ngung = t.tinh_trang === 'THANH_LY'; %>
+    <tr class="<%= ngung ? 'dong-ngung' : '' %>">
+      <td data-nhan="Mã tài sản" class="khong-xuong-dong"><b><%= t.ma_tai_san %></b></td>
+      <td data-nhan="Tên thiết bị"><%= t.ten_thiet_bi %></td>
+      <td data-nhan="Loại"><%= t.ten_loai %></td>
+      <td data-nhan="Model – Hãng"><%= t.model_hang || '–' %></td>
+      <td data-nhan="Phòng" class="khong-xuong-dong"><%= t.ma_nha %>-<%= t.ma_phong %></td>
+      <td data-nhan="Năm SD"><%= t.nam_su_dung || '–' %></td>
+      <td data-nhan="Tình trạng"><span class="nhan-tt nhan-tt--<%= mauTinhTrang[t.tinh_trang] %>"><%= tinhTrangTB[t.tinh_trang] %></span></td>
+      <td data-nhan="Số lần sửa"><%= t.so_lan_sua %></td>
+      <td class="o-nut"><div class="nhom-nut nhom-nut--phai">
+        <a class="nut-nho nut-vien-xam" href="<%= url({ 'ho-so': t.id }) %>#ho-so">Hồ sơ</a>
+        <a class="nut-nho nut-vien-xam" href="<%= url({ sua: t.id }) %>#form-dm">Sửa</a>
+        <%- include('_nut-dong', { slug: 'thiet-bi', id: t.id, dangDung: !ngung, soYeuCau: t.so_yeu_cau, nhan: 'thiết bị ' + t.ma_tai_san, tenNgung: 'Ngừng sử dụng' }) %>
+      </div></td>
+    </tr>
+    <% }) %>
+  </tbody>
+</table>
+<%- include('../_phan-trang', { trang: thietBi.trang, soTrang: thietBi.soTrang, hrefTrang: function (t) { return url({ trang: t }); } }) %>
+<% } %>

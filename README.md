@@ -12,7 +12,7 @@ Cần Node.js ≥ 18.
 npm install
 npm run seed     # xóa và tạo lại CSDL data/csvc.db + dữ liệu mẫu
 npm start        # http://localhost:3000
-npm test         # test tự động cho services/yeuCau.js (bảng chuyển trạng thái 5.1), chạy trên CSDL tạm
+npm test         # test tự động (bảng chuyển trạng thái 5.1, danh mục CSVC, KTV / khu vực, route Q03–Q05), chạy trên CSDL tạm
 ```
 
 ## Tài khoản mẫu
@@ -39,6 +39,9 @@ db/schema.sql        12 bảng theo SPEC mục 10
 db/index.js          kết nối SQLite
 services/yeuCau.js   logic nghiệp vụ: gửi yêu cầu và TOÀN BỘ chuyển trạng thái theo bảng 5.1 (BANG_CHUYEN)
 services/truyVanQL.js truy vấn chỉ đọc cho Q01 (lọc, đếm, theo nhà) và Q02 (chi tiết, lịch sử)
+services/danhMuc.js  ghi danh mục CSVC (nhà / phòng / loại / thiết bị): trùng mã, BR-10, ngừng theo cấp (mục 6.1)
+services/nhanSu.js   ghi tài khoản KTV (thêm / sửa / khóa) và khu vực phụ trách KTV ↔ Nhà
+services/truyVanDanhMuc.js, truyVanPhanCong.js  truy vấn chỉ đọc cho Q04 và Q03 / Q05
 test/                test tự động (node --test)
 lib/                 hằng số (vai trò, trạng thái), giờ Việt Nam, menu theo vai trò
 middleware/auth.js   phiên đăng nhập, chặn truy cập theo vai trò (ở server)
@@ -55,6 +58,8 @@ design/, docs/       ảnh giao diện mẫu, sơ đồ, quy trình QT.06
 - [x] Đợt 1: CSDL, dữ liệu mẫu, khung giao diện, đăng nhập và chuyển trang theo vai trò
 - [x] Đợt 2: màn hình Sinh viên (S01 Yêu cầu của tôi, S02 Gửi yêu cầu mới, S03 Chi tiết / Hủy yêu cầu)
 - [x] Đợt 3: Quản lý – Q01 Danh sách yêu cầu (ô số liệu, theo nhà, lọc, sắp xếp, phân trang), Q02 Chi tiết & xử lý (phân công có gợi ý KTV, từ chối, đổi KTV, nghiệm thu, làm lại, chuyển phương án, đóng)
-- [ ] Đợt 4–6: xem `PROMPTS.md`
+- [x] Đợt 4: Kỹ thuật viên – K01 Việc được giao, K02 Chi tiết (bắt đầu kiểm tra, báo kết quả)
+- [x] Đợt 5: Q03 Bảng phân công (khu vực phụ trách, công việc đã giao), Q04 Danh mục CSVC (4 tab, Hồ sơ thiết bị), Q05 Quản lý KTV
+- [ ] Đợt 6: xem `PROMPTS.md`
 
 Thư mục `frontend/`, `backend/` và `index.html` ở gốc là bản thử giao diện tĩnh cũ (chạy trên GitHub Pages), không dùng cho ứng dụng này.

@@ -1,0 +1,5 @@
+<%# Ô tìm kiếm dùng chung. Tham số: ghiChu (placeholder). Các ô lọc khác của tab nằm trong cùng form ở partial của tab. %>
+<label class="an-di" for="loc-q">Tìm kiếm</label>
+<input class="o-chon o-tim" type="search" id="loc-q" name="q" value="<%= boLoc.q %>" placeholder="<%= ghiChu %>">
+<button type="submit" class="nut-xanh nut-nho">Tìm</button>
+<% if (boLoc.q) { %><a class="lien-ket-phu" href="<%= url({ q: '' }) %>">Xóa tìm kiếm</a><% } %>
