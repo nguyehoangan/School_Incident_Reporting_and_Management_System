@@ -1,0 +1,33 @@
+<form class="bo-loc-ql" method="get" action="/quan-ly/co-so-vat-chat" data-bo-loc>
+  <input type="hidden" name="tab" value="phong">
+  <label class="an-di" for="loc-nha">Nhà</label>
+  <select class="o-chon" id="loc-nha" name="nha" data-tu-gui>
+    <option value="">Nhà: Tất cả</option>
+    <% dsNhaLoc.forEach(function (n) { %><option value="<%= n.id %>" <%= boLoc.nha === n.id ? 'selected' : '' %>>Nhà: <%= n.ma_nha %></option><% }) %>
+  </select>
+  <%- include('_loc-tim', { ghiChu: 'Mã phòng, loại phòng…' }) %>
+  <span class="phan-trang-thanh__tong"><%= phong.tong %> phòng</span>
+</form>
+<% if (!phong.dong.length) { %>
+<div class="trang-rong"><p>Không có phòng nào khớp.</p></div>
+<% } else { %>
+<table class="bang bang--the bang-ql">
+  <thead><tr><th>Phòng</th><th>Tầng</th><th>Loại phòng</th><th>Thiết bị</th><th>Trạng thái</th><th><span class="an-di">Thao tác</span></th></tr></thead>
+  <tbody>
+    <% phong.dong.forEach(function (p) { const ten = p.ma_nha + '-' + p.ma_phong; %>
+    <tr class="<%= p.dang_su_dung ? '' : 'dong-ngung' %>">
+      <td data-nhan="Phòng" class="khong-xuong-dong"><b><%= ten %></b></td>
+      <td data-nhan="Tầng"><%= p.tang === null ? '–' : p.tang %></td>
+      <td data-nhan="Loại phòng"><%= p.loai_phong || '–' %></td>
+      <td data-nhan="Thiết bị"><%= p.so_thiet_bi %><% if (p.so_thiet_bi !== p.so_thiet_bi_chua_thanh_ly) { %> <span class="chu-phu-nho">(<%= p.so_thiet_bi_chua_thanh_ly %> chưa thanh lý)</span><% } %></td>
+      <td data-nhan="Trạng thái"><% if (p.dang_su_dung) { %><span class="nhan-tt nhan-tt--xanh-la">Đang sử dụng</span><% } else { %><span class="nhan-tt nhan-tt--xam">Ngừng sử dụng</span><% } %></td>
+      <td class="o-nut"><div class="nhom-nut nhom-nut--phai">
+        <a class="nut-nho nut-vien-xam" href="<%= url({ sua: p.id }) %>#form-dm">Sửa</a>
+        <%- include('_nut-dong', { slug: 'phong', id: p.id, dangDung: !!p.dang_su_dung, soYeuCau: p.so_yeu_cau, nhan: 'phòng ' + ten }) %>
+      </div></td>
+    </tr>
+    <% }) %>
+  </tbody>
+</table>
+<%- include('../_phan-trang', { trang: phong.trang, soTrang: phong.soTrang, hrefTrang: function (t) { return url({ trang: t }); } }) %>
+<% } %>

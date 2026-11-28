@@ -1,0 +1,93 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header') %>
+<%
+  const sua = form && !!form.id;
+  const gt = (k) => (form && form.giaTri[k] !== undefined && form.giaTri[k] !== null ? form.giaTri[k] : '');
+  const loiO = (k) => (form && form.loi[k]) || '';
+  const thuocTinh = (k) => (loiO(k) ? `aria-invalid="true" aria-describedby="loi-${k}"` : '');
+%>
+<main class="noi-dung khung">
+  <nav class="vet-dan" aria-label="Vị trí">Quản lý / <span>Quản lý kỹ thuật viên</span></nav>
+  <div class="thanh-tieu-de">
+    <h1 class="tieu-de-trang">Quản lý kỹ thuật viên</h1>
+    <a class="nut-do" href="/quan-ly/ky-thuat-vien?them=1#form-ktv">+ Thêm kỹ thuật viên</a>
+  </div>
+
+  <% if (flash) { %>
+  <div class="thong-bao <%= flash.loai === 'ok' ? 'thong-bao--ok' : 'thong-bao--loi' %>" role="<%= flash.loai === 'ok' ? 'status' : 'alert' %>"><%= flash.noiDung %></div>
+  <% } %>
+
+  <% if (form) { %>
+  <section class="the-trang" aria-label="<%= sua ? 'Sửa kỹ thuật viên' : 'Thêm kỹ thuật viên' %>">
+    <form class="form-dm" id="form-ktv" method="post" action="/quan-ly/ky-thuat-vien<%= sua ? '/' + form.id : '' %>" novalidate>
+      <h2 class="the-trang__tieu-de"><%= sua ? 'Sửa thông tin kỹ thuật viên' : 'Thêm kỹ thuật viên' %></h2>
+      <% if (Object.keys(form.loi).length) { %><div class="thong-bao thong-bao--loi" role="alert">Chưa lưu được: vui lòng sửa các ô báo lỗi bên dưới.</div><% } %>
+      <div class="luoi-form">
+        <div class="truong <%= loiO('ho_ten') ? 'co-loi' : '' %>">
+          <label class="nhan" for="f-ho_ten">Họ tên <span class="bat-buoc">*</span></label>
+          <input class="o-nhap" id="f-ho_ten" name="ho_ten" value="<%= gt('ho_ten') %>" maxlength="100" <%- thuocTinh('ho_ten') %> required>
+          <% if (loiO('ho_ten')) { %><p class="loi-truong" id="loi-ho_ten"><%= loiO('ho_ten') %></p><% } %>
+        </div>
+        <div class="truong <%= loiO('email') ? 'co-loi' : '' %>">
+          <label class="nhan" for="f-email">Email <span class="bat-buoc">*</span></label>
+          <% if (sua) { %>
+          <input class="o-nhap" id="f-email" value="<%= form.email %>" readonly>
+          <% } else { %>
+          <input class="o-nhap" type="email" id="f-email" name="email" value="<%= gt('email') %>" placeholder="ten@hust.edu.vn" autocomplete="off" <%- thuocTinh('email') %> required>
+          <% } %>
+          <% if (loiO('email')) { %><p class="loi-truong" id="loi-email"><%= loiO('email') %></p><% } %>
+        </div>
+        <div class="truong <%= loiO('so_dien_thoai') ? 'co-loi' : '' %>">
+          <label class="nhan" for="f-so_dien_thoai">Số điện thoại</label>
+          <input class="o-nhap" id="f-so_dien_thoai" name="so_dien_thoai" value="<%= gt('so_dien_thoai') %>" inputmode="tel" placeholder="Ví dụ 0912345678" <%- thuocTinh('so_dien_thoai') %>>
+          <% if (loiO('so_dien_thoai')) { %><p class="loi-truong" id="loi-so_dien_thoai"><%= loiO('so_dien_thoai') %></p><% } %>
+        </div>
+        <% if (!sua) { %>
+        <div class="truong <%= loiO('mat_khau') ? 'co-loi' : '' %>">
+          <label class="nhan" for="f-mat_khau">Mật khẩu ban đầu <span class="bat-buoc">*</span></label>
+          <input class="o-nhap" type="password" id="f-mat_khau" name="mat_khau" autocomplete="new-password" placeholder="Ít nhất <%= matKhauToiThieu %> ký tự" <%- thuocTinh('mat_khau') %> required>
+          <% if (loiO('mat_khau')) { %><p class="loi-truong" id="loi-mat_khau"><%= loiO('mat_khau') %></p><% } %>
+        </div>
+        <% } %>
+      </div>
+      <div class="hang-nut hang-nut--phai">
+        <a class="nut-vien-xam" href="/quan-ly/ky-thuat-vien">Hủy</a>
+        <button type="submit" class="nut-do"><%= sua ? 'Lưu thay đổi' : 'Thêm kỹ thuật viên' %></button>
+      </div>
+    </form>
+  </section>
+  <% } %>
+
+  <section class="the-trang" aria-label="Danh sách kỹ thuật viên">
+    <table class="bang bang--the bang-ql">
+      <thead>
+        <tr><th>Họ tên</th><th>Email</th><th>Số điện thoại</th><th>Nhà phụ trách</th><th>Việc đang làm</th><th>Trạng thái</th><th><span class="an-di">Thao tác</span></th></tr>
+      </thead>
+      <tbody>
+        <% dsKtv.forEach(function (k) { %>
+        <tr class="<%= k.biKhoa ? 'dong-ngung' : '' %>">
+          <td data-nhan="Họ tên"><b><%= k.hoTen %></b></td>
+          <td data-nhan="Email"><%= k.email %></td>
+          <td data-nhan="Số điện thoại" class="khong-xuong-dong"><%= k.sdt || '–' %></td>
+          <td data-nhan="Nhà phụ trách">
+            <% if (k.nha.length) { %><span class="chip-nhom"><% k.nha.forEach(function (n) { %><span class="chip-nha"><%= n.ma %></span><% }) %></span><% } else { %><span class="chu-phu-nho">Chưa có</span><% } %>
+          </td>
+          <td data-nhan="Việc đang làm"><%= k.dangLam %></td>
+          <td data-nhan="Trạng thái"><% if (k.biKhoa) { %><span class="nhan-tt nhan-tt--xam">Đã khóa</span><% } else { %><span class="nhan-tt nhan-tt--xanh-la">Hoạt động</span><% } %></td>
+          <td class="o-nut"><div class="nhom-nut nhom-nut--phai">
+            <a class="nut-nho nut-vien-xam" href="/quan-ly/ky-thuat-vien?sua=<%= k.id %>#form-ktv">Sửa</a>
+            <% if (k.biKhoa) { %>
+            <form method="post" action="/quan-ly/ky-thuat-vien/<%= k.id %>/mo-khoa" class="form-dong"><button type="submit" class="nut-nho nut-vien-xam">Mở khóa</button></form>
+            <% } else { %>
+            <form method="post" action="/quan-ly/ky-thuat-vien/<%= k.id %>/khoa" class="form-dong" data-xac-nhan="Khóa tài khoản <%= k.hoTen %>? Người này sẽ không đăng nhập được và không còn trong gợi ý phân công."><button type="submit" class="nut-nho nut-vien-do">Khóa</button></form>
+            <% } %>
+          </div></td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+    <% if (!dsKtv.length) { %><div class="trang-rong"><p>Chưa có kỹ thuật viên nào.</p></div><% } %>
+  </section>
+</main>
+<script src="/public/js/ql-chung.js"></script>
+<%- include('../partials/foot') %>

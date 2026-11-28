@@ -1,0 +1,25 @@
+<form class="bo-loc-ql" method="get" action="/quan-ly/co-so-vat-chat" data-bo-loc>
+  <input type="hidden" name="tab" value="nha">
+  <%- include('_loc-tim', { ghiChu: 'Mã nhà, tên nhà…' }) %>
+</form>
+<% if (!dsNha.length) { %>
+<div class="trang-rong"><p>Không có nhà nào khớp.</p></div>
+<% } else { %>
+<table class="bang bang--the bang-ql">
+  <thead><tr><th>Mã nhà</th><th>Tên nhà</th><th>Phòng đang dùng</th><th>Trạng thái</th><th><span class="an-di">Thao tác</span></th></tr></thead>
+  <tbody>
+    <% dsNha.forEach(function (n) { %>
+    <tr class="<%= n.dang_su_dung ? '' : 'dong-ngung' %>">
+      <td data-nhan="Mã nhà"><b><%= n.ma_nha %></b></td>
+      <td data-nhan="Tên nhà"><%= n.ten_nha %></td>
+      <td data-nhan="Phòng đang dùng"><%= n.so_phong_dang_dung %> / <%= n.so_phong %></td>
+      <td data-nhan="Trạng thái"><% if (n.dang_su_dung) { %><span class="nhan-tt nhan-tt--xanh-la">Đang sử dụng</span><% } else { %><span class="nhan-tt nhan-tt--xam">Ngừng sử dụng</span><% } %></td>
+      <td class="o-nut"><div class="nhom-nut nhom-nut--phai">
+        <a class="nut-nho nut-vien-xam" href="<%= url({ sua: n.id }) %>#form-dm">Sửa</a>
+        <%- include('_nut-dong', { slug: 'nha', id: n.id, dangDung: !!n.dang_su_dung, soYeuCau: n.so_yeu_cau, nhan: 'nhà ' + n.ma_nha }) %>
+      </div></td>
+    </tr>
+    <% }) %>
+  </tbody>
+</table>
+<% } %>

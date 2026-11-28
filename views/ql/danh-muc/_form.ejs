@@ -1,0 +1,127 @@
+<%# Form thêm / sửa ngay trong thẻ. Tham số: form = { muc, id, giaTri, loi }. Lỗi hiện ngay dưới từng ô. %>
+<%
+  const sua = !!form.id;
+  const gt = (k) => (form.giaTri[k] === undefined || form.giaTri[k] === null ? '' : form.giaTri[k]);
+  const loiO = (k) => form.loi[k] || '';
+  const tenMuc = { nha: 'nhà', phong: 'phòng', loai: 'loại thiết bị', thietBi: 'thiết bị' }[form.muc];
+  const duongDanForm = sua ? duongHanhDong(tab, form.id, '') : duongHanhDong(tab, null, '');
+  const thuocTinh = (k) => (loiO(k) ? `aria-invalid="true" aria-describedby="loi-${k}"` : '');
+%>
+<form class="form-dm" id="form-dm" method="post" action="<%= duongDanForm %>" novalidate>
+  <h2 class="the-trang__tieu-de"><%= sua ? 'Sửa ' : 'Thêm ' %><%= tenMuc %></h2>
+  <% if (Object.keys(form.loi).length) { %><div class="thong-bao thong-bao--loi" role="alert">Chưa lưu được: vui lòng sửa các ô báo lỗi bên dưới.</div><% } %>
+
+  <div class="luoi-form">
+  <% if (form.muc === 'nha') { %>
+    <div class="truong <%= loiO('ma_nha') ? 'co-loi' : '' %>">
+      <label class="nhan" for="f-ma_nha">Mã nhà <span class="bat-buoc">*</span></label>
+      <input class="o-nhap" id="f-ma_nha" name="ma_nha" value="<%= gt('ma_nha') %>" maxlength="10" placeholder="Ví dụ D8" autocomplete="off" <%- thuocTinh('ma_nha') %> required>
+      <% if (loiO('ma_nha')) { %><p class="loi-truong" id="loi-ma_nha"><%= loiO('ma_nha') %></p><% } %>
+    </div>
+    <div class="truong <%= loiO('ten_nha') ? 'co-loi' : '' %>">
+      <label class="nhan" for="f-ten_nha">Tên nhà <span class="bat-buoc">*</span></label>
+      <input class="o-nhap" id="f-ten_nha" name="ten_nha" value="<%= gt('ten_nha') %>" maxlength="100" placeholder="Ví dụ Nhà D8" <%- thuocTinh('ten_nha') %> required>
+      <% if (loiO('ten_nha')) { %><p class="loi-truong" id="loi-ten_nha"><%= loiO('ten_nha') %></p><% } %>
+    </div>
+
+  <% } else if (form.muc === 'phong') { %>
+    <div class="truong <%= loiO('nha_id') ? 'co-loi' : '' %>">
+      <label class="nhan" for="f-nha_id">Nhà <span class="bat-buoc">*</span></label>
+      <% if (sua) { %>
+      <input class="o-nhap" id="f-nha_id" value="<%= gt('nha_ma') %>" readonly>
+      <% } else { %>
+      <select class="o-nhap" id="f-nha_id" name="nha_id" <%- thuocTinh('nha_id') %> required>
+        <option value="">– Chọn nhà –</option>
+        <% tuyChonForm.nha.forEach(function (n) { %><option value="<%= n.id %>" <%= String(gt('nha_id')) === String(n.id) ? 'selected' : '' %>><%= n.ma_nha %> – <%= n.ten_nha %></option><% }) %>
+      </select>
+      <% } %>
+      <% if (loiO('nha_id')) { %><p class="loi-truong" id="loi-nha_id"><%= loiO('nha_id') %></p><% } %>
+    </div>
+    <div class="truong <%= loiO('ma_phong') ? 'co-loi' : '' %>">
+      <label class="nhan" for="f-ma_phong">Mã phòng <span class="bat-buoc">*</span></label>
+      <input class="o-nhap" id="f-ma_phong" name="ma_phong" value="<%= gt('ma_phong') %>" maxlength="25" placeholder="Ví dụ 101 (hiển thị D8-101)" autocomplete="off" <%- thuocTinh('ma_phong') %> required>
+      <% if (loiO('ma_phong')) { %><p class="loi-truong" id="loi-ma_phong"><%= loiO('ma_phong') %></p><% } %>
+    </div>
+    <div class="truong <%= loiO('tang') ? 'co-loi' : '' %>">
+      <label class="nhan" for="f-tang">Tầng</label>
+      <input class="o-nhap" id="f-tang" name="tang" value="<%= gt('tang') %>" inputmode="numeric" maxlength="2" placeholder="Ví dụ 1" <%- thuocTinh('tang') %>>
+      <% if (loiO('tang')) { %><p class="loi-truong" id="loi-tang"><%= loiO('tang') %></p><% } %>
+    </div>
+    <div class="truong <%= loiO('loai_phong') ? 'co-loi' : '' %>">
+      <label class="nhan" for="f-loai_phong">Loại phòng</label>
+      <input class="o-nhap" id="f-loai_phong" name="loai_phong" value="<%= gt('loai_phong') %>" list="ds-loai-phong" maxlength="50" placeholder="Phòng học, Phòng thí nghiệm, Hội trường…" <%- thuocTinh('loai_phong') %>>
+      <datalist id="ds-loai-phong"><% loaiPhongGoiY.forEach(function (x) { %><option value="<%= x %>"><% }) %></datalist>
+      <% if (loiO('loai_phong')) { %><p class="loi-truong" id="loi-loai_phong"><%= loiO('loai_phong') %></p><% } %>
+    </div>
+
+  <% } else if (form.muc === 'loai') { %>
+    <div class="truong <%= loiO('ten_loai') ? 'co-loi' : '' %>">
+      <label class="nhan" for="f-ten_loai">Tên loại <span class="bat-buoc">*</span></label>
+      <input class="o-nhap" id="f-ten_loai" name="ten_loai" value="<%= gt('ten_loai') %>" maxlength="50" placeholder="Ví dụ Máy chiếu" <%- thuocTinh('ten_loai') %> required>
+      <% if (loiO('ten_loai')) { %><p class="loi-truong" id="loi-ten_loai"><%= loiO('ten_loai') %></p><% } %>
+    </div>
+
+  <% } else { %>
+    <div class="truong <%= loiO('ma_tai_san') ? 'co-loi' : '' %>">
+      <label class="nhan" for="f-ma_tai_san">Mã tài sản <span class="bat-buoc">*</span></label>
+      <input class="o-nhap" id="f-ma_tai_san" name="ma_tai_san" value="<%= gt('ma_tai_san') %>" maxlength="30" placeholder="Ví dụ MC-D8101-01" autocomplete="off" <%- thuocTinh('ma_tai_san') %> required>
+      <% if (loiO('ma_tai_san')) { %><p class="loi-truong" id="loi-ma_tai_san"><%= loiO('ma_tai_san') %></p><% } %>
+    </div>
+    <div class="truong <%= loiO('ten_thiet_bi') ? 'co-loi' : '' %>">
+      <label class="nhan" for="f-ten_thiet_bi">Tên thiết bị <span class="bat-buoc">*</span></label>
+      <input class="o-nhap" id="f-ten_thiet_bi" name="ten_thiet_bi" value="<%= gt('ten_thiet_bi') %>" maxlength="100" placeholder="Ví dụ Máy chiếu" <%- thuocTinh('ten_thiet_bi') %> required>
+      <% if (loiO('ten_thiet_bi')) { %><p class="loi-truong" id="loi-ten_thiet_bi"><%= loiO('ten_thiet_bi') %></p><% } %>
+    </div>
+    <div class="truong <%= loiO('loai_thiet_bi_id') ? 'co-loi' : '' %>">
+      <label class="nhan" for="f-loai_thiet_bi_id">Loại thiết bị <span class="bat-buoc">*</span></label>
+      <select class="o-nhap" id="f-loai_thiet_bi_id" name="loai_thiet_bi_id" <%- thuocTinh('loai_thiet_bi_id') %> required>
+        <option value="">– Chọn loại –</option>
+        <% tuyChonForm.loai.forEach(function (l) { %><option value="<%= l.id %>" <%= String(gt('loai_thiet_bi_id')) === String(l.id) ? 'selected' : '' %>><%= l.ten_loai %><%= l.dang_su_dung ? '' : ' (đã ngừng)' %></option><% }) %>
+      </select>
+      <% if (loiO('loai_thiet_bi_id')) { %><p class="loi-truong" id="loi-loai_thiet_bi_id"><%= loiO('loai_thiet_bi_id') %></p><% } %>
+    </div>
+    <div class="truong <%= loiO('phong_id') ? 'co-loi' : '' %>">
+      <label class="nhan" for="f-phong_id">Phòng đặt <span class="bat-buoc">*</span></label>
+      <select class="o-nhap" id="f-phong_id" name="phong_id" <%- thuocTinh('phong_id') %> required>
+        <option value="">– Chọn phòng –</option>
+        <% tuyChonForm.phong.forEach(function (p) { %><option value="<%= p.id %>" <%= String(gt('phong_id')) === String(p.id) ? 'selected' : '' %>><%= p.ma_nha %>-<%= p.ma_phong %><%= p.dang_su_dung ? '' : ' (đã ngừng)' %></option><% }) %>
+      </select>
+      <% if (loiO('phong_id')) { %><p class="loi-truong" id="loi-phong_id"><%= loiO('phong_id') %></p><% } %>
+    </div>
+    <div class="truong <%= loiO('model_hang') ? 'co-loi' : '' %>">
+      <label class="nhan" for="f-model_hang">Model – Hãng</label>
+      <input class="o-nhap" id="f-model_hang" name="model_hang" value="<%= gt('model_hang') %>" maxlength="100" placeholder="Ví dụ Epson EB-X51" <%- thuocTinh('model_hang') %>>
+      <% if (loiO('model_hang')) { %><p class="loi-truong" id="loi-model_hang"><%= loiO('model_hang') %></p><% } %>
+    </div>
+    <div class="truong <%= loiO('nam_su_dung') ? 'co-loi' : '' %>">
+      <label class="nhan" for="f-nam_su_dung">Năm sử dụng</label>
+      <input class="o-nhap" id="f-nam_su_dung" name="nam_su_dung" value="<%= gt('nam_su_dung') %>" inputmode="numeric" maxlength="4" placeholder="Ví dụ 2021" <%- thuocTinh('nam_su_dung') %>>
+      <% if (loiO('nam_su_dung')) { %><p class="loi-truong" id="loi-nam_su_dung"><%= loiO('nam_su_dung') %></p><% } %>
+    </div>
+    <div class="truong <%= loiO('nguon_kinh_phi') ? 'co-loi' : '' %>">
+      <label class="nhan" for="f-nguon_kinh_phi">Nguồn kinh phí</label>
+      <input class="o-nhap" id="f-nguon_kinh_phi" name="nguon_kinh_phi" value="<%= gt('nguon_kinh_phi') %>" list="ds-nguon-kinh-phi" maxlength="100" <%- thuocTinh('nguon_kinh_phi') %>>
+      <datalist id="ds-nguon-kinh-phi"><% nguonKinhPhiGoiY.forEach(function (x) { %><option value="<%= x %>"><% }) %></datalist>
+      <% if (loiO('nguon_kinh_phi')) { %><p class="loi-truong" id="loi-nguon_kinh_phi"><%= loiO('nguon_kinh_phi') %></p><% } %>
+    </div>
+    <div class="truong <%= loiO('han_bao_hanh') ? 'co-loi' : '' %>">
+      <label class="nhan" for="f-han_bao_hanh">Hạn bảo hành</label>
+      <input class="o-nhap" type="date" id="f-han_bao_hanh" name="han_bao_hanh" value="<%= gt('han_bao_hanh') %>" <%- thuocTinh('han_bao_hanh') %>>
+      <% if (loiO('han_bao_hanh')) { %><p class="loi-truong" id="loi-han_bao_hanh"><%= loiO('han_bao_hanh') %></p><% } %>
+    </div>
+    <div class="truong <%= loiO('tinh_trang') ? 'co-loi' : '' %>">
+      <label class="nhan" for="f-tinh_trang">Tình trạng</label>
+      <select class="o-nhap" id="f-tinh_trang" name="tinh_trang" <%- thuocTinh('tinh_trang') %>>
+        <% Object.keys(tinhTrangTB).forEach(function (k) { %><option value="<%= k %>" <%= gt('tinh_trang') === k ? 'selected' : '' %>><%= tinhTrangTB[k] %></option><% }) %>
+      </select>
+      <p class="goi-y">Bình thường tình trạng tự đổi theo yêu cầu (mục 6.3); chỉ sửa tay khi cần, ví dụ đã thay thiết bị mới.</p>
+      <% if (loiO('tinh_trang')) { %><p class="loi-truong" id="loi-tinh_trang"><%= loiO('tinh_trang') %></p><% } %>
+    </div>
+  <% } %>
+  </div>
+
+  <div class="hang-nut hang-nut--phai">
+    <a class="nut-vien-xam" href="<%= url({}) %>">Hủy</a>
+    <button type="submit" class="nut-do"><%= sua ? 'Lưu thay đổi' : 'Lưu' %></button>
+  </div>
+</form>

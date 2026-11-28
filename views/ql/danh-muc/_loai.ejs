@@ -1,0 +1,24 @@
+<form class="bo-loc-ql" method="get" action="/quan-ly/co-so-vat-chat" data-bo-loc>
+  <input type="hidden" name="tab" value="loai">
+  <%- include('_loc-tim', { ghiChu: 'Tên loại…' }) %>
+</form>
+<% if (!dsLoai.length) { %>
+<div class="trang-rong"><p>Không có loại thiết bị nào khớp.</p></div>
+<% } else { %>
+<table class="bang bang--the bang-ql">
+  <thead><tr><th>Tên loại</th><th>Số thiết bị</th><th>Trạng thái</th><th><span class="an-di">Thao tác</span></th></tr></thead>
+  <tbody>
+    <% dsLoai.forEach(function (l) { %>
+    <tr class="<%= l.dang_su_dung ? '' : 'dong-ngung' %>">
+      <td data-nhan="Tên loại"><b><%= l.ten_loai %></b></td>
+      <td data-nhan="Số thiết bị"><%= l.so_thiet_bi %></td>
+      <td data-nhan="Trạng thái"><% if (l.dang_su_dung) { %><span class="nhan-tt nhan-tt--xanh-la">Đang sử dụng</span><% } else { %><span class="nhan-tt nhan-tt--xam">Ngừng sử dụng</span><% } %></td>
+      <td class="o-nut"><div class="nhom-nut nhom-nut--phai">
+        <a class="nut-nho nut-vien-xam" href="<%= url({ sua: l.id }) %>#form-dm">Sửa</a>
+        <%- include('_nut-dong', { slug: 'loai', id: l.id, dangDung: !!l.dang_su_dung, soYeuCau: l.so_yeu_cau, nhan: 'loại ' + l.ten_loai }) %>
+      </div></td>
+    </tr>
+    <% }) %>
+  </tbody>
+</table>
+<% } %>

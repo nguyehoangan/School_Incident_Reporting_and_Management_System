@@ -1,4 +1,4 @@
-// Trang của Quản lý: Q01 Danh sách yêu cầu, Q02 Chi tiết & xử lý (SPEC mục 8). Q03–Q06 làm ở đợt sau.
+// Trang của Quản lý: Q01 Danh sách yêu cầu, Q02 Chi tiết & xử lý (SPEC mục 8). Q03–Q05 ở các router riêng (đợt 5), Q06 làm ở đợt 6.
 const express = require('express');
 const { chiVaiTro } = require('../middleware/auth');
 const { gioVN, choONhapGio, hanKiemTraMacDinh } = require('../lib/thoiGian');
@@ -114,9 +114,11 @@ router.post('/yeu-cau/:id/:hanhDong', (req, res, next) => {
   }
 });
 
-router.get('/phan-cong', (req, res) => res.render('trang-tam', { tieuDe: 'Bảng phân công', maMan: 'Q03' }));
-router.get('/co-so-vat-chat', (req, res) => res.render('trang-tam', { tieuDe: 'Danh mục cơ sở vật chất', maMan: 'Q04' }));
-router.get('/ky-thuat-vien', (req, res) => res.render('trang-tam', { tieuDe: 'Quản lý kỹ thuật viên', maMan: 'Q05' }));
+// Q03, Q04, Q05 (đợt 5): mỗi màn hình một router riêng, đã nằm sau chiVaiTro('QUAN_LY') ở đầu file
+router.use('/phan-cong', require('./qlPhanCong'));
+router.use('/co-so-vat-chat', require('./qlDanhMuc'));
+router.use('/ky-thuat-vien', require('./qlKtv'));
+// Q06 làm ở đợt 6, giữ trang tạm
 router.get('/so-tiep-nhan', (req, res) => res.render('trang-tam', { tieuDe: 'Sổ tiếp nhận thông báo sự cố (M.02)', maMan: 'Q06' }));
 
 module.exports = router;

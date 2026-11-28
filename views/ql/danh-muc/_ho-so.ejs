@@ -1,0 +1,43 @@
+<%# Hồ sơ thiết bị: cột 1–7 sổ M.03 + lịch sử sửa chữa (cột 8). Tham số: hoSo = { tb, phong, lichSu, soLanSua } %>
+<% const tb = hoSo.tb; %>
+<section class="the-trang" id="ho-so" aria-labelledby="ho-so-tieu-de">
+  <div class="thanh-tieu-de">
+    <h2 class="the-trang__tieu-de the-trang__tieu-de--lon" id="ho-so-tieu-de">Hồ sơ thiết bị <%= tb.ma_tai_san %> – lịch sử sửa chữa (theo cột 8, sổ M.03)</h2>
+    <div class="nhom-nut">
+      <button type="button" class="nut-vien-xam nut-nho" id="nut-in-m03" hidden>In M.03</button>
+      <a class="nut-vien-xam nut-nho" href="<%= url({ 'ho-so': '' }) %>">Đóng hồ sơ</a>
+    </div>
+  </div>
+
+  <dl class="the-thong-tin ho-so-tt">
+    <div><dt>Tên thiết bị</dt><dd><%= tb.ten_thiet_bi %></dd></div>
+    <div><dt>Loại</dt><dd><%= tb.ten_loai %></dd></div>
+    <div><dt>Model – Hãng</dt><dd><%= tb.model_hang || '–' %></dd></div>
+    <div><dt>Số lượng</dt><dd>1</dd></div>
+    <div><dt>Năm sử dụng</dt><dd><%= tb.nam_su_dung || '–' %></dd></div>
+    <div><dt>Nguồn kinh phí</dt><dd><%= tb.nguon_kinh_phi || '–' %></dd></div>
+    <div><dt>Hiện trạng</dt><dd><span class="nhan-tt nhan-tt--<%= mauTinhTrang[tb.tinh_trang] %>"><%= tinhTrangTB[tb.tinh_trang] %></span></dd></div>
+    <div><dt>Nơi đặt</dt><dd><%= hoSo.phong %></dd></div>
+    <div><dt>Hạn bảo hành</dt><dd><%= tb.han_bao_hanh ? dinhDang(tb.han_bao_hanh) : '–' %></dd></div>
+    <div><dt>Số lần sửa chữa</dt><dd><%= hoSo.soLanSua %></dd></div>
+  </dl>
+
+  <% if (!hoSo.lichSu.length) { %>
+  <p class="chu-phu-nho chu-phu-nho--dong">Thiết bị này chưa có lần sửa chữa nào.</p>
+  <% } else { %>
+  <table class="bang bang--the bang-ql">
+    <thead><tr><th>Ngày</th><th>Mã yêu cầu</th><th>Nội dung đã sửa</th><th>KTV</th><th>Kết quả</th></tr></thead>
+    <tbody>
+      <% hoSo.lichSu.forEach(function (l) { %>
+      <tr>
+        <td data-nhan="Ngày" class="khong-xuong-dong"><%= dinhDang(l.ngay) %></td>
+        <td data-nhan="Mã yêu cầu"><a class="ma-ql" href="/quan-ly/yeu-cau/<%= l.yeuCauId %>"><%= l.ma %></a></td>
+        <td data-nhan="Nội dung đã sửa"><%= l.noiDung %></td>
+        <td data-nhan="KTV"><%= l.ktv %></td>
+        <td data-nhan="Kết quả"><%= l.ketQua %></td>
+      </tr>
+      <% }) %>
+    </tbody>
+  </table>
+  <% } %>
+</section>

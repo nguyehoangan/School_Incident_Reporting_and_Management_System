@@ -1,0 +1,136 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header') %>
+<main class="noi-dung khung">
+  <nav class="vet-dan" aria-label="Vị trí">Quản lý / <span>Bảng phân công</span></nav>
+  <h1 class="tieu-de-trang">Bảng phân công</h1>
+
+  <% if (flash) { %>
+  <div class="thong-bao <%= flash.loai === 'ok' ? 'thong-bao--ok' : 'thong-bao--loi' %>" role="<%= flash.loai === 'ok' ? 'status' : 'alert' %>"><%= flash.noiDung %></div>
+  <% } %>
+
+  <section class="the-trang" aria-label="Bảng phân công">
+    <div class="tab-ds" role="tablist" aria-label="Nội dung bảng phân công">
+      <% Object.keys(tabs).forEach(function (k) { %>
+      <a class="tab-ds__tab <%= k === tab ? 'dang-chon' : '' %>" role="tab" aria-selected="<%= k === tab %>" href="/quan-ly/phan-cong?tab=<%= k %>"><%= tabs[k] %></a>
+      <% }) %>
+    </div>
+
+    <% if (tab === 'khu-vuc') { %>
+    <table class="bang bang--the bang-ql bang-q03">
+      <thead>
+        <tr><th>Kỹ thuật viên</th><th>Email</th><th>Nhà phụ trách</th><th>Việc đang làm</th><th>Quá hạn</th><th><span class="an-di">Thao tác</span></th></tr>
+      </thead>
+      <tbody>
+        <% khuVuc.forEach(function (k) { %>
+        <tr class="<%= k.biKhoa ? 'dong-ngung' : '' %> <%= ktvSua && ktvSua.id === k.id ? 'dong-dang-sua' : '' %>">
+          <td data-nhan="Kỹ thuật viên"><b><%= k.hoTen %></b><% if (k.biKhoa) { %> <span class="nhan-tt nhan-tt--xam">Đã khóa</span><% } %></td>
+          <td data-nhan="Email"><%= k.email %></td>
+          <td data-nhan="Nhà phụ trách">
+            <% if (k.nha.length) { %><span class="chip-nhom"><% k.nha.forEach(function (n) { %><span class="chip-nha"><%= n.ma %></span><% }) %></span>
+            <% } else { %><span class="chu-phu-nho">Chưa có</span><% } %>
+          </td>
+          <td data-nhan="Việc đang làm"><%= k.dangLam %></td>
+          <td data-nhan="Quá hạn"><% if (k.quaHan) { %><b class="chu-do"><%= k.quaHan %></b><% } else { %>0<% } %></td>
+          <td class="o-nut"><a class="nut-nho nut-vien-xam" href="/quan-ly/phan-cong?tab=khu-vuc&amp;sua=<%= k.id %>#sua-khu-vuc" aria-label="Sửa khu vực của <%= k.hoTen %>">Sửa</a></td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+    <% } else { %>
+    <form class="bo-loc-ql" method="get" action="/quan-ly/phan-cong" data-bo-loc>
+      <input type="hidden" name="tab" value="cong-viec">
+      <label class="an-di" for="loc-ktv">Kỹ thuật viên</label>
+      <select class="o-chon" id="loc-ktv" name="ktv" data-tu-gui>
+        <option value="">KTV: Tất cả</option>
+        <% loc.ktv.forEach(function (k) { %><option value="<%= k.id %>" <%= boLoc.ktv === k.id ? 'selected' : '' %>><%= k.ho_ten %></option><% }) %>
+      </select>
+      <label class="an-di" for="loc-nha">Nhà</label>
+      <select class="o-chon" id="loc-nha" name="nha" data-tu-gui>
+        <option value="">Nhà: Tất cả</option>
+        <% loc.nha.forEach(function (n) { %><option value="<%= n.id %>" <%= boLoc.nha === n.id ? 'selected' : '' %>><%= n.ma_nha %></option><% }) %>
+      </select>
+      <label class="an-di" for="loc-tt">Trạng thái</label>
+      <select class="o-chon" id="loc-tt" name="tt" data-tu-gui>
+        <option value="">Trạng thái: Tất cả</option>
+        <% Object.keys(trangThai).forEach(function (k) { %><option value="<%= k %>" <%= boLoc.tt === k ? 'selected' : '' %>><%= trangThai[k].ql %></option><% }) %>
+      </select>
+      <label class="o-chon o-tick"><input type="checkbox" name="cu" value="1" data-tu-gui <%= boLoc.cu ? 'checked' : '' %>> Hiện cả bản ghi cũ</label>
+      <button type="submit" class="nut-xanh nut-nho">Lọc</button>
+      <% if (boLoc.ktv || boLoc.nha || boLoc.tt || boLoc.cu) { %><a class="lien-ket-phu" href="/quan-ly/phan-cong?tab=cong-viec">Xóa bộ lọc</a><% } %>
+      <span class="phan-trang-thanh__tong"><%= tong %> bản ghi</span>
+    </form>
+
+    <% if (tong === 0) { %>
+    <div class="trang-rong"><p>Chưa có công việc nào khớp bộ lọc.</p></div>
+    <% } else { %>
+    <table class="bang bang--the bang-ql bang-q03">
+      <thead>
+        <tr><th>Mã yêu cầu</th><th>Phòng</th><th>Kỹ thuật viên</th><th>Giao lúc</th><th>Hạn</th><th>Trạng thái</th><th>Quá hạn</th></tr>
+      </thead>
+      <tbody>
+        <% dong.forEach(function (r) { %>
+        <tr class="<%= r.hieuLuc ? '' : 'dong-ngung' %>">
+          <td data-nhan="Mã yêu cầu"><a class="ma-ql" href="/quan-ly/yeu-cau/<%= r.yeuCauId %>"><%= r.ma %></a></td>
+          <td data-nhan="Phòng" class="khong-xuong-dong"><%= r.phong %></td>
+          <td data-nhan="Kỹ thuật viên"><%= r.ktv %><% if (!r.hieuLuc) { %> <span class="nhan-tt nhan-tt--xam">Hết hiệu lực</span><% } %></td>
+          <td data-nhan="Giao lúc" class="khong-xuong-dong"><%= dinhDang(r.giaoLuc) %></td>
+          <td data-nhan="Hạn" class="khong-xuong-dong"><%= dinhDang(r.han) %></td>
+          <td data-nhan="Trạng thái"><span class="nhan-tt nhan-tt--<%= r.trangThai.mau %>"><%= r.trangThai.ten %></span></td>
+          <td data-nhan="Quá hạn"><% if (r.quaHan) { %><b class="chu-do">Quá hạn</b><% } else { %>–<% } %></td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+    <%- include('_phan-trang', { trang: trang, soTrang: soTrang, hrefTrang: function (t) { return url({ trang: t }); } }) %>
+    <% } %>
+    <% } %>
+  </section>
+
+  <% if (tab === 'khu-vuc') { %>
+  <div class="luoi-q03">
+    <section class="the-trang" aria-labelledby="xem-theo-nha">
+      <h2 class="the-trang__tieu-de" id="xem-theo-nha">Xem theo nhà</h2>
+      <table class="bang bang--the bang-ql">
+        <thead><tr><th>Nhà</th><th>KTV phụ trách</th><th>Yêu cầu chưa xong</th></tr></thead>
+        <tbody>
+          <% theoNha.forEach(function (n) { %>
+          <tr class="<%= n.canhBao ? 'dong-canh-bao' : '' %>">
+            <td data-nhan="Nhà"><b><%= n.ma %></b><% if (n.ngung) { %> <span class="chu-phu-nho">(đã ngừng)</span><% } %></td>
+            <td data-nhan="KTV phụ trách">
+              <% if (n.canhBao) { %><b class="chu-canh-bao">⚠ Chưa có KTV phụ trách</b><% } else { %><%= n.ktv.join(', ') %><% } %>
+            </td>
+            <td data-nhan="Yêu cầu chưa xong"><%= n.chuaXong %></td>
+          </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="the-trang" id="sua-khu-vuc" aria-labelledby="tieu-de-sua">
+      <% if (ktvSua) { %>
+      <h2 class="the-trang__tieu-de" id="tieu-de-sua">Sửa khu vực – <%= ktvSua.hoTen %></h2>
+      <form method="post" action="/quan-ly/phan-cong/khu-vuc/<%= ktvSua.id %>">
+        <p class="chu-phu-nho chu-phu-nho--dong">Chọn các nhà KTV phụ trách (dùng để gợi ý khi phân công, không ép buộc).</p>
+        <div class="luoi-nha-chon">
+          <% hopNha.forEach(function (n) { %>
+          <label class="o-danh-dau-nha">
+            <input type="checkbox" name="nha" value="<%= n.id %>" <%= n.chon ? 'checked' : '' %>>
+            <span><%= n.ma %><% if (n.ngung) { %> <small>(đã ngừng)</small><% } %></span>
+          </label>
+          <% }) %>
+        </div>
+        <div class="hang-nut hang-nut--phai">
+          <a class="nut-vien-xam" href="/quan-ly/phan-cong?tab=khu-vuc">Hủy</a>
+          <button type="submit" class="nut-do">Lưu</button>
+        </div>
+      </form>
+      <% } else { %>
+      <h2 class="the-trang__tieu-de" id="tieu-de-sua">Sửa khu vực phụ trách</h2>
+      <p class="chu-phu-nho chu-phu-nho--dong">Bấm <b>Sửa</b> ở một kỹ thuật viên để chọn các nhà người đó phụ trách.</p>
+      <% } %>
+    </section>
+  </div>
+  <% } %>
+</main>
+<script src="/public/js/ql-chung.js"></script>
+<%- include('../partials/foot') %>

@@ -1,0 +1,10 @@
+<%# Phân trang. Tham số: trang, soTrang, hrefTrang(t) -> đường dẫn %>
+<% if (soTrang > 1) { %>
+<nav class="phan-trang phan-trang--phai" aria-label="Phân trang">
+  <% if (trang > 1) { %><a href="<%= hrefTrang(trang - 1) %>" aria-label="Trang trước">‹</a><% } else { %><span class="tat" aria-hidden="true">‹</span><% } %>
+  <% for (let t = 1; t <= soTrang; t++) { %>
+    <% if (t === trang) { %><span class="dang-chon" aria-current="page"><%= t %></span><% } else { %><a href="<%= hrefTrang(t) %>"><%= t %></a><% } %>
+  <% } %>
+  <% if (trang < soTrang) { %><a href="<%= hrefTrang(trang + 1) %>" aria-label="Trang sau">›</a><% } else { %><span class="tat" aria-hidden="true">›</span><% } %>
+</nav>
+<% } %>
