@@ -1,0 +1,45 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header') %>
+<%
+  const tongTrongTab = nhom.reduce(function (s, g) { return s + g.dong.length; }, 0);
+  const moTaTab = { 'can-lam': 'Không có việc nào cần làm', 'cho-nghiem-thu': 'Không có việc nào đang chờ nghiệm thu', 'da-xong': 'Chưa có việc nào đã xong' };
+%>
+<main class="noi-dung khung">
+  <nav class="vet-dan" aria-label="Vị trí">Kỹ thuật viên / <span>Việc được giao</span></nav>
+  <h1 class="tieu-de-trang">Việc được giao</h1>
+
+  <section class="the-trang" aria-label="Danh sách việc được giao">
+    <div class="tab-ds" role="tablist" aria-label="Nhóm việc">
+      <% Object.keys(tab).forEach(function (k) { %>
+      <a class="tab-ds__tab <%= k === khoa ? 'dang-chon' : '' %>" role="tab" aria-selected="<%= k === khoa %>" href="/ky-thuat-vien/viec?tab=<%= k %>"><%= tab[k].ten %> (<%= dem[k] %>)</a>
+      <% }) %>
+    </div>
+    <p class="chu-phu-nho chu-phu-nho--dong">
+      <% if (khuVuc.length) { %>Khu vực phụ trách: <%= khuVuc.join(', ') %> · <% } %>Nhóm theo nhà, khẩn cấp và hạn gần lên trước
+    </p>
+
+    <% if (tongTrongTab === 0) { %>
+    <div class="trang-rong"><p><%= moTaTab[khoa] %></p></div>
+    <% } %>
+
+    <% nhom.forEach(function (g) { %>
+    <section class="nhom-viec" aria-label="Nhà <%= g.maNha %>">
+      <h2 class="nhom-nha__tieu-de nhom-nha__tieu-de--viec">Nhà <%= g.maNha %> <span>· <%= g.dong.length %> việc</span></h2>
+      <ul class="ds-viec">
+        <% g.dong.forEach(function (v) { %>
+        <li class="viec <%= v.khanCap ? 'viec--khan' : '' %>">
+          <a class="viec__ma ma-ql" href="/ky-thuat-vien/viec/<%= v.id %>"><%= v.ma %></a>
+          <span class="viec__phong"><span class="an-di">Phòng </span><%= v.phong %></span>
+          <span class="viec__thiet-bi"><span class="an-di">Thiết bị </span><%= v.thietBi %></span>
+          <span class="viec__muc-do muc-do <%= v.khanCap ? 'muc-do--khan' : '' %>"><%= v.khanCap ? '⚠ ' : '' %><%= v.mucDo %></span>
+          <span class="viec__han <%= v.quaHan ? 'viec__han--qua' : '' %>">Hạn: <%= dinhDang(v.han) %><%= v.quaHan ? ' · Quá hạn' : '' %></span>
+          <span class="viec__tt"><span class="nhan-tt nhan-tt--<%= v.trangThai.mau %>"><%= v.trangThai.ten %></span></span>
+          <a class="viec__xem nut-nho nut-vien-xam" href="/ky-thuat-vien/viec/<%= v.id %>" aria-label="Xem <%= v.ma %>">Xem</a>
+        </li>
+        <% }) %>
+      </ul>
+    </section>
+    <% }) %>
+  </section>
+</main>
+<%- include('../partials/foot') %>
