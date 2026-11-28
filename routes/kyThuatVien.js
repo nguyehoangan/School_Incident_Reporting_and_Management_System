@@ -49,8 +49,11 @@ router.get('/viec/:id', (req, res) => {
   delete req.session.flashK02;
 
   const hanhDong = yeuCau.cacHanhDongHopLe(req.nguoiDung, yc, pc);
+  const daNhap = flash && flash.duLieu ? flash.duLieu : null;
   // Dòng nội dung sửa chữa: giữ lại những gì KTV đã nhập khi server báo lỗi, nếu không thì 1 dòng trống
-  const dongNhap = flash && flash.duLieu && flash.duLieu.dong.length ? flash.duLieu.dong : [{ noi_dung: '', so_luong: '', ghi_chu: '' }];
+  const dongNhap = daNhap && daNhap.dong.length ? daNhap.dong : [{ noi_dung: '', so_luong: '', ghi_chu: '' }];
+  // Biên bản kiểm tra kỹ thuật (M.04): giá trị đã nhập khi server báo lỗi; mặc định "Còn bảo hành: Không"
+  const bienBanNhap = daNhap ? daNhap.bienBan : { tinh_trang_su_co: '', nguyen_nhan: '', bp: {}, ct: {}, con_bao_hanh: '0' };
 
   res.render('ktv/chi-tiet', {
     tieuDe: `Công việc ${yc.ma_yeu_cau}`,
@@ -62,11 +65,21 @@ router.get('/viec/:id', (req, res) => {
     tinhTrangTB: TINH_TRANG_THIET_BI,
     phuongAn: PHUONG_AN,
     hanhDong,
+    ketQuaChon: daNhap && daNhap.ketQua === 'KHONG_KHAC_PHUC' ? 'KHONG_KHAC_PHUC' : 'KHAC_PHUC_TAI_CHO',
     dongNhap,
+    bienBanNhap,
+    bienPhap: BIEN_PHAP,
     gioiHan: { anhToiDa: yeuCau.ANH.toiDa, dungLuongToiDa: yeuCau.ANH.dungLuongToiDa },
     flash,
   });
 });
+
+// Biện pháp đề nghị của biên bản M.04 (mục 8 – K02), đúng thứ tự trên mẫu giấy. Khóa trùng tên trong services/yeuCau.js.
+const BIEN_PHAP = [
+  { khoa: 'mua_vat_tu', ten: 'Mua vật tư thay thế', goiY: 'Ví dụ: thay tụ khởi động 35µF' },
+  { khoa: 'thue_sua', ten: 'Thuê đơn vị sửa chữa', goiY: 'Ví dụ: thay block, nạp gas' },
+  { khoa: 'thanh_ly', ten: 'Hỏng – đề nghị thanh lý', goiY: 'Ví dụ: máy quá cũ, không còn linh kiện' },
+];
 
 // Chuẩn hóa dữ liệu form để lưu vào phiên khi báo lỗi (chỉ chuỗi, cắt độ dài)
 const chuoi = (v) => String(v == null ? '' : v).slice(0, 1000);
@@ -74,7 +87,36 @@ function giuLaiForm(body) {
   const dong = Array.isArray(body.dong) ? Array.from(body.dong, (r) => ({
     noi_dung: chuoi(r && r.noi_dung), so_luong: chuoi(r && r.so_luong), ghi_chu: chuoi(r && r.ghi_chu),
   })) : [];
-  return { dong: dong.slice(0, 50) };
+  const bp = {};
+  const ct = {};
+  for (const { khoa } of BIEN_PHAP) {
+    bp[khoa] = !!body[`bp_${khoa}`];
+    ct[khoa] = chuoi(body[`ct_${khoa}`]);
+  }
+  return {
+    ketQua: chuoi(body.ket_qua),
+    dong: dong.slice(0, 50),
+    bienBan: {
+      tinh_trang_su_co: chuoi(body.tinh_trang_su_co),
+      nguyen_nhan: chuoi(body.nguyen_nhan),
+      bp,
+      ct,
+      con_bao_hanh: body.con_bao_hanh === '1' ? '1' : '0',
+    },
+  };
+}
+
+// Form K02 -> dữ liệu cho services/yeuCau.js (BANG_CHUYEN.baoKetQua). Mỗi biện pháp là 1 ô đánh dấu (bp_*) kèm ô chi tiết (ct_*):
+// chỉ biện pháp được đánh dấu mới đưa vào de_xuat; đánh dấu mà không ghi chi tiết thì gửi true (service lưu "Có đề nghị").
+function duLieuBaoKetQua(body, anh) {
+  const du = { ...body, anh };
+  if (body.ket_qua === 'KHONG_KHAC_PHUC') {
+    du.de_xuat = {};
+    for (const { khoa } of BIEN_PHAP) {
+      if (body[`bp_${khoa}`]) du.de_xuat[khoa] = String(body[`ct_${khoa}`] || '').trim() || true;
+    }
+  }
+  return du;
 }
 
 function baoLoi(req, res, id, e, duLieu = null) {
@@ -114,11 +156,14 @@ router.post('/viec/:id/bao-ket-qua', (req, res, next) => {
 
     const body = req.body || {};
     try {
-      const kq = yeuCau.thucHienHanhDong(req.nguoiDung, id, 'baoKetQua', { ...body, anh: req.files || [] });
-      req.session.flashK02 = { id: kq.id, loai: 'ok', noiDung: `Đã gửi kết quả ${kq.ma}, chờ quản lý nghiệm thu.` };
+      const kq = yeuCau.thucHienHanhDong(req.nguoiDung, id, 'baoKetQua', duLieuBaoKetQua(body, req.files || []));
+      const thongDiep = body.ket_qua === 'KHONG_KHAC_PHUC'
+        ? `Đã lập biên bản kiểm tra kỹ thuật (M.04) cho ${kq.ma}, chờ quản lý duyệt.`
+        : `Đã gửi kết quả ${kq.ma}, chờ quản lý nghiệm thu.`;
+      req.session.flashK02 = { id: kq.id, loai: 'ok', noiDung: thongDiep };
       res.redirect(`/ky-thuat-vien/viec/${kq.id}#xu-ly`);
     } catch (e) {
-      if (e instanceof yeuCau.LoiNghiepVu && e.ma === 422 && req.files && req.files.length) {
+      if (e instanceof yeuCau.LoiNghiepVu && e.ma === 422 && req.files && req.files.length && body.ket_qua !== 'KHONG_KHAC_PHUC') {
         e.message += ' Ảnh sau sửa cần được chọn lại.'; // trình duyệt không giữ lại tệp đã chọn sau khi tải lại trang
       }
       xuLyLoi(req, res, next, id, e, giuLaiForm(body));

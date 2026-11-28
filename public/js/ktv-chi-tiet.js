@@ -1,4 +1,4 @@
-// K02 – Chi tiết công việc (KTV): bảng nhiều dòng "Nội dung sửa chữa", ảnh sau sửa có xem trước,
+// K02 – Chi tiết công việc (KTV): chọn kết quả (khắc phục tại chỗ / biên bản M.04), bảng nhiều dòng "Nội dung sửa chữa", ảnh sau sửa có xem trước,
 // kiểm tra nhanh trên form, phóng to ảnh, khóa nút khi đang gửi. Server kiểm tra lại toàn bộ.
 (function () {
   function dongKhiBamNen(hop) {
@@ -152,8 +152,66 @@
   });
   veAnh();
 
+  // ---------- Hai nhánh kết quả: "Đã khắc phục tại chỗ" (phần II M.01) / "Không khắc phục tại chỗ" (biên bản M.04)
+  var nhanh = form.querySelectorAll('.nhanh-ket-qua');
+  function ketQuaChon() {
+    var r = form.querySelector('input[name=ket_qua]:checked');
+    return r ? r.value : '';
+  }
+  function hienNhanh() {
+    var kq = ketQuaChon();
+    nhanh.forEach(function (n) { n.hidden = n.getAttribute('data-nhanh') !== kq; });
+  }
+  form.querySelectorAll('input[name=ket_qua]').forEach(function (r) { r.addEventListener('change', hienNhanh); });
+  hienNhanh();
+
+  // Biện pháp đề nghị: gõ chi tiết thì tự đánh dấu biện pháp đó
+  var loiDeXuat = document.getElementById('loi-de-xuat');
+  function ganLoiDeXuat(noiDung) {
+    loiDeXuat.textContent = noiDung;
+    loiDeXuat.hidden = !noiDung;
+    document.getElementById('truong-de-xuat').classList.toggle('co-loi', !!noiDung);
+  }
+  form.querySelectorAll('.bien-phap').forEach(function (d) {
+    var o = d.querySelector('input[type=checkbox]');
+    d.querySelector('.bien-phap__chi-tiet').addEventListener('input', function (e) {
+      if (e.target.value.trim()) o.checked = true;
+      ganLoiDeXuat('');
+    });
+    o.addEventListener('change', function () { ganLoiDeXuat(''); });
+  });
+  // Ô bắt buộc của biên bản: gõ vào thì xóa lỗi của ô đó
+  function loiTextarea(o, noiDung) {
+    var p = o.parentNode.querySelector('.loi-truong');
+    p.textContent = noiDung;
+    p.hidden = !noiDung;
+    o.parentNode.classList.toggle('co-loi', !!noiDung);
+    if (noiDung) o.setAttribute('aria-invalid', 'true'); else o.removeAttribute('aria-invalid');
+  }
+  var oTinhTrang = document.getElementById('bb-tinh-trang');
+  var oNguyenNhan = document.getElementById('bb-nguyen-nhan');
+  [oTinhTrang, oNguyenNhan].forEach(function (o) { o.addEventListener('input', function () { loiTextarea(o, ''); }); });
+
+  function kiemTraBienBan() {
+    var dau = null;
+    [oTinhTrang, oNguyenNhan].forEach(function (o) {
+      var trong = !o.value.trim();
+      loiTextarea(o, trong ? TRONG : '');
+      if (trong) dau = dau || o;
+    });
+    var coBienPhap = form.querySelectorAll('.bien-phap input[type=checkbox]:checked').length > 0;
+    ganLoiDeXuat(coBienPhap ? '' : 'Chọn ít nhất 1 biện pháp đề nghị');
+    if (!coBienPhap) dau = dau || form.querySelector('.bien-phap input[type=checkbox]');
+    return dau;
+  }
+
   // ---------- Kiểm tra khi gửi
   form.addEventListener('submit', function (e) {
+    if (ketQuaChon() === 'KHONG_KHAC_PHUC') {
+      var loiBB = kiemTraBienBan();
+      if (loiBB) { e.preventDefault(); loiBB.focus(); }
+      return;
+    }
     var viTriLoi = null;
     var coDong = false;
     dongHienCo().forEach(function (tr) {

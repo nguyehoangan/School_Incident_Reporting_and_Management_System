@@ -1,0 +1,40 @@
+<%- include('_dau') %>
+<%- include('_quoc-hieu', { dongDuoi: 'PHÒNG QUẢN LÝ CƠ SỞ VẬT CHẤT' }) %>
+
+<h1 class="tieu-de-giay">SỔ THEO DÕI HIỆU QUẢ SỬ DỤNG TRANG THIẾT BỊ</h1>
+<p class="giua"><b>Tên đơn vị: Nhà <%= tb.ma_nha %> – Phòng <%= phong %></b></p>
+
+<h2 class="phan-giay">I. PHẦN 1. ĐIỀU KIỆN VẬN HÀNH, QUẢN LÝ</h2>
+<div class="cuon-giay">
+<table class="bang-giay bang-giay--m03">
+  <colgroup><col style="width:5%"><col style="width:15%"><col style="width:14%"><col style="width:7%"><col style="width:8%"><col style="width:11%"><col style="width:10%"><col style="width:30%"></colgroup>
+  <thead>
+    <tr><th>Stt</th><th>Tên thiết bị</th><th>Model – Hãng sản xuất</th><th>Số lượng</th><th>Năm sử dụng</th><th>Nguồn kinh phí</th><th>Hiện trạng</th><th>Sửa chữa (Số lần và nội dung đã sửa chữa)</th></tr>
+    <tr class="dong-so-cot"><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td><td>8</td></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="giua">1</td>
+      <td><%= tb.ten_thiet_bi %><br><span class="nho">Mã TS: <%= tb.ma_tai_san %></span></td>
+      <td><%= tb.model_hang || '' %></td>
+      <td class="giua">1</td>
+      <td class="giua"><%= tb.nam_su_dung || '' %></td>
+      <td><%= tb.nguon_kinh_phi || '' %></td>
+      <td><%= tinhTrang %></td>
+      <td>
+        <b><%= soLanSua %> lần</b>
+        <% if (lanSua.length) { %>
+        <ol class="ds-lan-sua"><% lanSua.forEach(function (l) { %><li><%= l %></li><% }) %></ol>
+        <% } %>
+      </td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<p class="nho nghieng">Cột 9–15 (điều kiện vận hành, hiệu quả sử dụng…) và Phần 2 ghi tay khi cần.</p>
+
+<div class="o-ky o-ky--2">
+  <div class="o-ky__muc"><p class="o-ky__ngay">&nbsp;</p><p class="o-ky__chuc-danh">CÁN BỘ QUẢN LÝ TÀI SẢN CỦA ĐƠN VỊ</p><p class="o-ky__huong-dan">(Ký, ghi rõ họ tên)</p></div>
+  <div class="o-ky__muc"><p class="o-ky__ngay">Hà Nội, <%= ngayChu('').charAt(0).toLowerCase() + ngayChu('').slice(1) %></p><p class="o-ky__chuc-danh">TRƯỞNG ĐƠN VỊ</p><p class="o-ky__huong-dan">(Ký, ghi rõ họ tên)</p></div>
+</div>
+<%- include('_cuoi') %>

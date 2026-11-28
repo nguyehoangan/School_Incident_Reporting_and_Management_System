@@ -788,3 +788,54 @@ body.nen-xam { background: var(--nen-xam); }
   .bang-ql td.o-nut .nut-nho { padding: 4px 10px; }
   .bang-tb th, .bang-tb td { padding-inline: 8px; }
 }
+
+/* ================================================================ Đợt 6 */
+/* K02 – nhánh "Không khắc phục tại chỗ": form Biên bản kiểm tra kỹ thuật (M.04) */
+.nhanh-ket-qua[hidden] { display: none; }
+.bien-ban-nhap { margin-top: 4px; }
+.bien-ban-nhap textarea.o-nhap { resize: vertical; min-height: 64px; }
+.bien-ban-nhap textarea[aria-invalid="true"] { border-color: var(--loi-chu); }
+.bien-phap { display: grid; grid-template-columns: 220px minmax(0, 1fr); align-items: center; gap: 4px 12px; margin-bottom: 8px; }
+.bien-phap__chon { font-size: 14px; min-height: 40px; }
+.bien-phap__chi-tiet.o-nhap { margin-bottom: 0; }
+#truong-de-xuat legend { margin-bottom: 6px; }
+
+/* Q06 – Sổ tiếp nhận (M.02) */
+.nut-tieu-de { padding: 9px 16px; border-radius: 6px; font-weight: 600; font-size: 14px; }
+.bang-so td { vertical-align: top; }
+@media (min-width: 641px) { .bang-so td:first-child { width: 48px; } }
+.lien-ket-an { color: inherit; text-decoration: none; }
+.lien-ket-an:hover { color: var(--xanh-dam); text-decoration: underline; }
+.bo-loc-ql .phan-trang-thanh__tong { margin-left: auto; }
+
+@media (max-width: 640px) {
+  .bien-phap { grid-template-columns: minmax(0, 1fr); }
+  .bo-loc-ql .phan-trang-thanh__tong { margin-left: 0; }
+  .thanh-tieu-de .nhom-nut > a { flex: 1 1 0; text-align: center; }
+}
+
+/* ---------------------------------------------------------------- Điện thoại (≤ 640px): ô bấm đủ to (≥ 40px) */
+@media (max-width: 640px) {
+  .nut-vien, .nut-xanh, .nut-vien-xam, .nut-vien-do, .nut-do, .nut-nau, .nut-nho, .nut-phu, .nut-nguy-hiem,
+  .chip, .bo-loc__muc, .viec__xem, .nut-chu-xanh {
+    display: inline-flex; align-items: center; justify-content: center; min-height: 40px;
+  }
+  .nut-chu-xanh { justify-content: flex-start; }
+  .chip { padding: 6px 14px; }
+  .bang--the td.o-nut .nut-nho, .bang-ql td.o-nut .nut-nho { padding: 6px 14px; }
+  select.o-nhap, input.o-nhap, .o-chon { min-height: 42px; }
+  .khoang-ngay { min-height: 42px; }
+  .khoang-ngay input { min-height: 36px; }
+  input[type="radio"], input[type="checkbox"] { width: 20px; height: 20px; flex: none; }
+  .the-chon, .o-danh-dau-nha, .chon-nhieu__ds label { min-height: 40px; }
+  .nut-xoa-dong { width: 40px; height: 40px; margin-top: 0; }
+  .bang-nhap .o-xoa { width: 44px; }
+}
+@media (max-width: 640px) {
+  .bang--the td .chu-phu-nho { white-space: normal; } /* "→ Chuyển xử lý theo phương án" không đẩy thẻ tràn ngang */
+}
+@media (max-width: 640px) {
+  /* Menu QL có 5 mục: xuống dòng thay vì cuộn ngang, để mục đang mở (ví dụ "Sổ tiếp nhận") luôn thấy được */
+  .thanh-menu__ds { flex-wrap: wrap; overflow-x: visible; gap: 0 18px; }
+  .thanh-menu__ds a { padding: 10px 0 8px; }
+}

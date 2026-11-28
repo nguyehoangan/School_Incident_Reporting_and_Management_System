@@ -4,7 +4,7 @@
   <div class="thanh-tieu-de">
     <h2 class="the-trang__tieu-de the-trang__tieu-de--lon" id="ho-so-tieu-de">Hồ sơ thiết bị <%= tb.ma_tai_san %> – lịch sử sửa chữa (theo cột 8, sổ M.03)</h2>
     <div class="nhom-nut">
-      <button type="button" class="nut-vien-xam nut-nho" id="nut-in-m03" hidden>In M.03</button>
+      <a class="nut-vien-xam nut-nho" id="nut-in-m03" href="/in/m03/<%= tb.id %>">In M.03</a>
       <a class="nut-vien-xam nut-nho" href="<%= url({ 'ho-so': '' }) %>">Đóng hồ sơ</a>
     </div>
   </div>

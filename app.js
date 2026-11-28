@@ -36,6 +36,7 @@ app.use('/', require('./routes/auth'));
 app.use('/sinh-vien', require('./routes/sinhVien'));
 app.use('/quan-ly', require('./routes/quanLy'));
 app.use('/ky-thuat-vien', require('./routes/kyThuatVien'));
+app.use('/in', require('./routes/inBieuMau')); // trang in biểu mẫu M.01–M.04
 
 app.use((req, res) => {
   res.status(404).render('loi', { tieuDe: 'Không tìm thấy trang', thongDiep: 'Đường dẫn không tồn tại.' });

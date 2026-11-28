@@ -1,0 +1,21 @@
+<%- include('_dau') %>
+<%- include('_quoc-hieu', { dongDuoi: 'PHÒNG QUẢN LÝ CƠ SỞ VẬT CHẤT' }) %>
+
+<h1 class="tieu-de-giay">SỔ TIẾP NHẬN THÔNG BÁO SỰ CỐ</h1>
+<p class="giua nghieng"><%= moTaLoc %></p>
+<div class="cuon-giay">
+<table class="bang-giay bang-giay--so">
+  <colgroup><col style="width:5%"><col style="width:9%"><col style="width:16%"><col style="width:9%"><col style="width:20%"><col style="width:11%"><col style="width:10%"><col style="width:20%"></colgroup>
+  <thead><tr><% cot.forEach(function (c) { %><th><%= c %></th><% }) %></tr></thead>
+  <tbody>
+    <% dong.forEach(function (d) { %>
+    <tr>
+      <td class="giua"><%= d.stt %></td><td><%= d.ngay %></td><td><%= d.thietBiTen %> <span class="khong-ngat"><%= d.thietBiMa %></span></td><td><%= d.donVi %></td>
+      <td><%= d.tinhTrang %></td><td><%= d.xacNhanDayDu %></td><td><%= d.ngayHoanThanh %></td><td><%= d.ghiChu %></td>
+    </tr>
+    <% }) %>
+    <% if (!dong.length) { for (var i = 0; i < 5; i++) { %><tr class="dong-trong"><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><% } } %>
+  </tbody>
+</table>
+</div>
+<%- include('_cuoi') %>

@@ -1,0 +1,53 @@
+<%- include('../partials/head') %>
+<%- include('../partials/header') %>
+<main class="noi-dung khung">
+  <nav class="vet-dan" aria-label="Vị trí">Quản lý / <span>Sổ tiếp nhận thông báo sự cố (M.02.QT&amp;VT.06)</span></nav>
+  <div class="thanh-tieu-de">
+    <h1 class="tieu-de-trang">Sổ tiếp nhận thông báo sự cố</h1>
+    <div class="nhom-nut">
+      <a class="nut-vien-xam nut-tieu-de" href="<%= urlExcel %>" download>Xuất Excel</a>
+      <a class="nut-do" href="<%= urlIn %>">In sổ</a>
+    </div>
+  </div>
+
+  <section class="the-trang" aria-label="Sổ tiếp nhận">
+    <form class="bo-loc-ql" method="get" action="/quan-ly/so-tiep-nhan" data-bo-loc>
+      <span class="khoang-ngay o-chon">
+        <label for="loc-tu">Từ</label> <input type="date" id="loc-tu" name="tu" value="<%= boLoc.tu %>" data-tu-gui>
+        <label for="loc-den">–</label> <input type="date" id="loc-den" name="den" value="<%= boLoc.den %>" data-tu-gui>
+      </span>
+      <label class="an-di" for="loc-nha">Nhà</label>
+      <select class="o-chon" id="loc-nha" name="nha" data-tu-gui>
+        <option value="">Nhà: Tất cả</option>
+        <% dsNha.forEach(function (n) { %><option value="<%= n.ma_nha %>" <%= boLoc.nha === n.ma_nha ? 'selected' : '' %>>Nhà: <%= n.ma_nha %></option><% }) %>
+      </select>
+      <button type="submit" class="nut-xanh nut-nho">Lọc</button>
+      <span class="chu-phu-nho">Sinh tự động từ các yêu cầu đã tiếp nhận · chỉ xem</span>
+      <span class="phan-trang-thanh__tong"><%= dong.length %> dòng</span>
+    </form>
+
+    <% if (!dong.length) { %>
+    <p class="chu-phu-nho chu-phu-nho--dong">Không có yêu cầu nào được tiếp nhận trong khoảng này.</p>
+    <% } else { %>
+    <table class="bang bang--the bang-ql bang-so">
+      <thead><tr><% cot.forEach(function (c) { %><th><%= c %></th><% }) %></tr></thead>
+      <tbody>
+        <% dong.forEach(function (d) { %>
+        <tr>
+          <td data-nhan="STT"><%= d.stt %></td>
+          <td data-nhan="Ngày tháng" class="khong-xuong-dong"><%= d.ngay %></td>
+          <td data-nhan="Thiết bị gặp sự cố"><a class="lien-ket-an" href="/quan-ly/yeu-cau/<%= d.id %>" title="<%= d.ma %>"><%= d.thietBiTen %> <span class="khong-xuong-dong"><%= d.thietBiMa %></span></a></td>
+          <td data-nhan="Đơn vị sử dụng"><%= d.donVi %></td>
+          <td data-nhan="Tình trạng sự cố"><%= d.tinhTrang %></td>
+          <td data-nhan="Xác nhận" title="<%= d.xacNhanDayDu %>"><%= d.xacNhan %></td>
+          <td data-nhan="Ngày hoàn thành"><%= d.ngayHoanThanh %></td>
+          <td data-nhan="Ghi chú"><%= d.ghiChu %></td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+    <% } %>
+  </section>
+</main>
+<script src="/public/js/ql-chung.js"></script>
+<%- include('../partials/foot') %>

@@ -94,7 +94,7 @@ function chiTietViec(ktvId, yeuCauId) {
   const db = layCsdl();
   const yc = db.prepare(`
     SELECT y.*, n.ma_nha, p.ma_phong, l.ten_loai,
-           t.ten_thiet_bi, t.ma_tai_san, t.model_hang, t.tinh_trang AS tinh_trang_tb,
+           t.ten_thiet_bi, t.ma_tai_san, t.model_hang, t.tinh_trang AS tinh_trang_tb, t.han_bao_hanh,
            sv.ho_ten AS ten_sv, sv.ma_so AS mssv
       FROM yeu_cau y
       JOIN phong p ON p.id = y.phong_id

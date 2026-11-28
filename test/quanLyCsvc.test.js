@@ -129,8 +129,8 @@ test('QL mở được các trang Q03, Q04, Q05 (kể cả các tab)', async () 
   html = await thanTrang(await ql.get('/quan-ly/co-so-vat-chat?tab=thiet-bi'));
   assert.match(html, /MC-D3301-01/);
   assert.match(html, /Số lần sửa/);
-  // Trang Q06 vẫn là trang tạm (đợt 6)
-  assert.match(await thanTrang(await ql.get('/quan-ly/so-tiep-nhan')), /đang được xây dựng/);
+  // Q06 (đợt 6): sổ M.02 thay trang tạm
+  assert.match(await thanTrang(await ql.get('/quan-ly/so-tiep-nhan')), /Sổ tiếp nhận thông báo sự cố/);
 });
 
 // ---------------------------------------------------------------- Q04

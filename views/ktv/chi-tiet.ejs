@@ -15,9 +15,13 @@
       <span class="nhan-tt nhan-tt--<%= trangThai.mau %>"><%= trangThai.ql %></span>
       <% if (yc.muc_do === 'KHAN_CAP') { %><span class="muc-do muc-do--khan">⚠ Khẩn cấp</span><% } %>
     </h1>
+    <% if (noiDungSua.length || bb) { %>
     <div class="nhom-nut">
-      <button type="button" class="nut-vien-xam" id="nut-in-m01" hidden>In M.01</button>
+      <%# SPEC 8 – K02: In M.01 khi đã có phần II, In M.04 khi đã lập biên bản %>
+      <% if (noiDungSua.length) { %><a class="nut-vien-xam" id="nut-in-m01" href="/in/m01/<%= yc.id %>">In M.01</a><% } %>
+      <% if (bb) { %><a class="nut-vien-xam" id="nut-in-m04" href="/in/m04/<%= yc.id %>">In M.04</a><% } %>
     </div>
+    <% } %>
   </div>
 
   <% if (flash) { %>
@@ -76,12 +80,14 @@
           <fieldset class="nhom-chon <%= loiTruong('ket_qua') ? 'co-loi' : '' %>">
             <legend class="an-di">Kết quả kiểm tra</legend>
             <div class="chon-muc-do chon-ket-qua">
-              <label class="the-chon"><input type="radio" name="ket_qua" value="KHAC_PHUC_TAI_CHO" checked> Đã khắc phục tại chỗ</label>
-              <label class="the-chon the-chon--tat" title="Làm ở đợt 6"><input type="radio" name="ket_qua" value="KHONG_KHAC_PHUC" disabled> Không khắc phục tại chỗ (lập biên bản M.04) <span class="chu-phu-nho">(làm ở đợt 6)</span></label>
+              <label class="the-chon"><input type="radio" name="ket_qua" value="KHAC_PHUC_TAI_CHO" <%= ketQuaChon === 'KHAC_PHUC_TAI_CHO' ? 'checked' : '' %>> Đã khắc phục tại chỗ</label>
+              <label class="the-chon"><input type="radio" name="ket_qua" value="KHONG_KHAC_PHUC" <%= ketQuaChon === 'KHONG_KHAC_PHUC' ? 'checked' : '' %>> Không khắc phục tại chỗ (lập biên bản M.04)</label>
             </div>
             <% if (loiTruong('ket_qua')) { %><p class="loi-truong"><%= loiTruong('ket_qua') %></p><% } %>
           </fieldset>
 
+          <!-- Nhánh "Đã khắc phục tại chỗ": phần II của M.01 + ảnh sau sửa -->
+          <div class="nhanh-ket-qua" data-nhanh="KHAC_PHUC_TAI_CHO" <%= ketQuaChon === 'KHAC_PHUC_TAI_CHO' ? '' : 'hidden' %>>
           <div class="truong <%= loiTruong('dong') ? 'co-loi' : '' %>" id="truong-dong">
             <span class="nhan" id="nhan-dong">Nội dung sửa chữa (phần II – M.01) <span class="bat-buoc">*</span></span>
             <div class="cuon-ngang">
@@ -117,6 +123,43 @@
             <input type="file" name="anh" id="chon-anh" accept="image/jpeg,image/png,.jpg,.jpeg,.png" multiple hidden>
             <ul class="luoi-anh" id="xem-truoc" aria-live="polite"></ul>
             <p class="loi-truong" id="loi-anh" <%= loiTruong('anh') ? '' : 'hidden' %>><%= loiTruong('anh') || '' %></p>
+          </div>
+          </div>
+
+          <!-- Nhánh "Không khắc phục tại chỗ": Biên bản kiểm tra kỹ thuật (M.04) -->
+          <% const bbn = bienBanNhap; %>
+          <div class="nhanh-ket-qua bien-ban-nhap" data-nhanh="KHONG_KHAC_PHUC" <%= ketQuaChon === 'KHONG_KHAC_PHUC' ? '' : 'hidden' %>>
+            <h3 class="khoi__tieu-de-nho">Biên bản kiểm tra kỹ thuật (M.04)</h3>
+            <div class="truong <%= loiTruong('tinh_trang_su_co') ? 'co-loi' : '' %>">
+              <label class="nhan" for="bb-tinh-trang">Tình trạng sự cố <span class="bat-buoc">*</span></label>
+              <textarea class="o-nhap" id="bb-tinh-trang" name="tinh_trang_su_co" rows="2" maxlength="1000" placeholder="Ví dụ: Máy nén không chạy, dàn lạnh không lạnh"
+                        <%- loiTruong('tinh_trang_su_co') ? 'aria-invalid="true"' : '' %>><%= bbn.tinh_trang_su_co %></textarea>
+              <p class="loi-truong" <%= loiTruong('tinh_trang_su_co') ? '' : 'hidden' %>><%= loiTruong('tinh_trang_su_co') || '' %></p>
+            </div>
+            <div class="truong <%= loiTruong('nguyen_nhan') ? 'co-loi' : '' %>">
+              <label class="nhan" for="bb-nguyen-nhan">Nguyên nhân <span class="bat-buoc">*</span></label>
+              <textarea class="o-nhap" id="bb-nguyen-nhan" name="nguyen_nhan" rows="2" maxlength="1000" placeholder="Ví dụ: Hỏng block máy nén"
+                        <%- loiTruong('nguyen_nhan') ? 'aria-invalid="true"' : '' %>><%= bbn.nguyen_nhan %></textarea>
+              <p class="loi-truong" <%= loiTruong('nguyen_nhan') ? '' : 'hidden' %>><%= loiTruong('nguyen_nhan') || '' %></p>
+            </div>
+            <fieldset class="truong nhom-chon <%= loiTruong('de_xuat') ? 'co-loi' : '' %>" id="truong-de-xuat">
+              <legend class="nhan">Biện pháp đề nghị xử lý <span class="bat-buoc">*</span> <span class="goi-y goi-y--dong">(đánh dấu ít nhất 1, có thể chọn nhiều)</span></legend>
+              <% bienPhap.forEach(function (b) { %>
+              <div class="bien-phap">
+                <label class="o-danh-dau-nha bien-phap__chon"><input type="checkbox" name="bp_<%= b.khoa %>" value="1" <%= bbn.bp[b.khoa] ? 'checked' : '' %>> <%= b.ten %></label>
+                <input class="o-nhap bien-phap__chi-tiet" name="ct_<%= b.khoa %>" maxlength="1000" value="<%= bbn.ct[b.khoa] %>" aria-label="Chi tiết: <%= b.ten %>" placeholder="<%= b.goiY %>">
+              </div>
+              <% }) %>
+              <p class="loi-truong" id="loi-de-xuat" <%= loiTruong('de_xuat') ? '' : 'hidden' %>><%= loiTruong('de_xuat') || '' %></p>
+            </fieldset>
+            <fieldset class="truong nhom-chon">
+              <legend class="nhan">Thiết bị còn bảo hành?</legend>
+              <div class="chon-muc-do chon-ket-qua">
+                <label class="the-chon"><input type="radio" name="con_bao_hanh" value="1" <%= bbn.con_bao_hanh === '1' ? 'checked' : '' %>> Có</label>
+                <label class="the-chon"><input type="radio" name="con_bao_hanh" value="0" <%= bbn.con_bao_hanh === '1' ? '' : 'checked' %>> Không</label>
+              </div>
+              <% if (yc.thiet_bi_id) { %><p class="goi-y">Hạn bảo hành theo danh mục: <%= yc.han_bao_hanh ? dinhDang(yc.han_bao_hanh) : 'chưa ghi' %>.</p><% } %>
+            </fieldset>
           </div>
 
           <div class="hang-nut hang-nut--phai"><button type="submit" class="nut-xanh" id="nut-gui-ket-qua">Gửi kết quả</button></div>
@@ -164,10 +207,11 @@
         </ul>
         <% } %>
         <% if (bb) { %>
-        <h3 class="khoi__tieu-de-nho">Biên bản kiểm tra kỹ thuật (M.04)</h3>
+        <h3 class="khoi__tieu-de-nho">Biên bản kiểm tra kỹ thuật (M.04) – lập <%= dinhDang(bb.thoi_gian) %></h3>
         <dl class="dong-tt">
           <dt>Tình trạng sự cố</dt><dd class="xuong-dong"><%= bb.tinh_trang_su_co %></dd>
           <dt>Nguyên nhân</dt><dd class="xuong-dong"><%= bb.nguyen_nhan %></dd>
+          <dt>Biện pháp đề nghị</dt><dd><%- include('../partials/de-xuat', { bb }) %></dd>
           <dt>Còn bảo hành</dt><dd><%= bb.con_bao_hanh ? 'Có' : 'Không' %></dd>
         </dl>
         <% } %>

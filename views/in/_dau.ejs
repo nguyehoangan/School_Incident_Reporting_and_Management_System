@@ -1,0 +1,20 @@
+<%# Khung trang in biểu mẫu (SPEC mục 9): thanh công cụ (không in) + tờ giấy A4. Tham số: tieuDe, kyHieu, quayLai, khoGiay ('doc' | 'ngang') %>
+<% const ngang = typeof khoGiay !== 'undefined' && khoGiay === 'ngang'; %>
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title><%= tieuDe %> – <%= tenHeThong %></title>
+<link rel="icon" href="/design/logoBK.webp">
+<link rel="stylesheet" href="/public/css/in.css">
+<% if (ngang) { %><style>@page { size: A4 landscape; }</style><% } %>
+</head>
+<body class="trang-in <%= ngang ? 'trang-in--ngang' : '' %>">
+<div class="thanh-in">
+  <a class="thanh-in__nut" href="<%= quayLai %>">‹ Quay lại</a>
+  <span class="thanh-in__ten"><%= tieuDe %> · khổ A4 <%= ngang ? 'ngang' : 'dọc' %></span>
+  <button type="button" class="thanh-in__nut thanh-in__nut--chinh" id="nut-in">In / Lưu PDF</button>
+</div>
+<main class="to-giay">
+  <p class="ky-hieu"><%= kyHieu %></p>

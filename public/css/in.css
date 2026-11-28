@@ -1,0 +1,108 @@
+/* Trang in biểu mẫu QT.06 (M.01, M.02, M.03, M.04) – khổ A4, bố cục theo mẫu giấy (SPEC mục 9).
+   Trên màn hình: tờ giấy trắng trên nền xám + thanh công cụ; khi in (@media print) chỉ còn tờ giấy. */
+@page { size: A4 portrait; margin: 14mm 16mm; }
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: #8a8d93; color: #000;
+  font-family: "Times New Roman", "Liberation Serif", "DejaVu Serif", Times, serif; font-size: 13.5pt; line-height: 1.35;
+}
+p { margin: 0 0 4px; }
+
+/* ---------- Thanh công cụ (chỉ trên màn hình) */
+.thanh-in {
+  position: sticky; top: 0; z-index: 5; display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  padding: 10px 16px; background: #1f2937; color: #fff; font: 14px/1.4 system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+}
+.thanh-in__ten { flex: 1 1 auto; min-width: 0; opacity: .85; }
+.thanh-in__nut {
+  display: inline-flex; align-items: center; min-height: 40px; padding: 8px 16px; border: 1px solid #6b7280; border-radius: 6px;
+  background: transparent; color: #fff; font: inherit; font-weight: 600; text-decoration: none; cursor: pointer;
+}
+.thanh-in__nut:hover { border-color: #fff; }
+.thanh-in__nut--chinh { background: #c8102e; border-color: #c8102e; }
+.thanh-in__nut--chinh:hover { background: #a50d26; }
+
+/* ---------- Tờ giấy */
+.to-giay {
+  width: 210mm; min-height: 297mm; margin: 24px auto; padding: 14mm 16mm; background: #fff;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, .35);
+}
+.trang-in--ngang .to-giay { width: 297mm; min-height: 210mm; }
+
+.ky-hieu { text-align: right; font-weight: bold; font-style: italic; margin-bottom: 10px; }
+.dau-giay { display: flex; justify-content: space-between; gap: 16px; margin-bottom: 18px; }
+.dau-giay__trai, .dau-giay__phai { text-align: center; }
+.dau-giay__don-vi { font-weight: bold; }
+.gach-chan { display: inline-block; border-bottom: 1px solid #000; padding-bottom: 1px; }
+
+.tieu-de-giay { margin: 8px 0 4px; text-align: center; font-size: 15.5pt; font-weight: bold; }
+.tieu-de-giay--nho { font-size: 14pt; margin-bottom: 12px; }
+.phan-giay { margin: 16px 0 6px; font-size: 13.5pt; font-weight: bold; }
+.giua { text-align: center; }
+.nghieng { font-style: italic; }
+.nho { font-size: 11pt; }
+.xuong-dong { white-space: pre-line; }
+
+/* Bảng có kẻ như mẫu giấy */
+.bang-giay { width: calc(100% - 2px); border-collapse: collapse; table-layout: fixed; margin: 6px 0; } /* -2px: đường kẻ phải không bị cắt ở mép vùng in */
+.bang-giay th, .bang-giay td { border: 1px solid #000; padding: 5px 7px; vertical-align: top; text-align: left; overflow-wrap: anywhere; }
+.bang-giay th { text-align: center; font-weight: bold; vertical-align: middle; }
+.bang-giay td.giua { text-align: center; }
+.khong-ngat { white-space: nowrap; }
+.bang-giay .dong-trong td { height: 30px; }
+.bang-giay--so, .bang-giay--m03 { font-size: 12pt; }
+.dong-so-cot td { text-align: center; font-style: italic; padding: 2px; }
+.ds-lan-sua { margin: 4px 0 0; padding-left: 18px; }
+
+/* Ô ký */
+.o-ky { display: flex; justify-content: space-around; gap: 8px; margin-top: 10px; text-align: center; page-break-inside: avoid; }
+.o-ky--phai { justify-content: flex-end; }
+.o-ky--phai .o-ky__muc { min-width: 45%; }
+.o-ky__muc { flex: 1 1 0; }
+.o-ky--phai .o-ky__muc { flex: 0 0 auto; }
+.o-ky__ngay { font-style: italic; margin: 0; }
+.o-ky__ngay--phai { text-align: right; padding-right: 6%; margin-top: 8px; }
+.o-ky__chuc-danh { font-weight: bold; margin: 0; }
+.o-ky__huong-dan { font-style: italic; font-size: 11pt; margin: 0; }
+.o-ky__ten { margin-top: 48px; min-height: 1.35em; }
+.o-ky--5 { margin-top: 28px; gap: 4px; font-size: 11.5pt; }
+
+/* M.04 */
+.noi-dung-bb { padding: 0 4%; }
+.noi-dung-bb p { margin-bottom: 5px; }
+.bang-thanh-phan { width: 100%; border-collapse: collapse; margin: 0 0 5px; }
+.bang-thanh-phan td { padding: 1px 0; vertical-align: top; }
+.bang-thanh-phan td:first-child { width: 48%; }
+.hai-cot { display: grid; grid-template-columns: 1.4fr 1fr; gap: 0 16px; }
+.bien-phap { display: flex; gap: 6px; align-items: baseline; }
+.o-vuong {
+  display: inline-flex; align-items: center; justify-content: center; flex: none;
+  width: 14px; height: 14px; border: 1px solid #000; font-size: 11px; line-height: 1;
+}
+
+/* ---------- Màn hình hẹp (điện thoại): tờ giấy co theo màn hình, bảng nhiều cột cuộn ngang trong khung */
+@media screen and (max-width: 860px) {
+  body { font-size: 12pt; }
+  .to-giay, .trang-in--ngang .to-giay { width: auto; min-height: 0; margin: 12px; padding: 18px 16px; }
+  .dau-giay { flex-direction: column; align-items: center; gap: 8px; }
+  .cuon-giay { overflow-x: auto; }
+  .bang-giay--so { min-width: 1000px; }
+  .bang-giay--m03 { min-width: 860px; }
+  .o-ky--5 { flex-wrap: wrap; }
+  .o-ky--5 .o-ky__muc { flex: 1 1 30%; }
+  .hai-cot { grid-template-columns: 1fr; }
+  .noi-dung-bb { padding: 0; }
+  .thanh-in__ten { flex-basis: 100%; order: -1; }
+  .thanh-in__nut { flex: 1 1 0; justify-content: center; }
+}
+
+/* ---------- Khi in */
+@media print {
+  body { background: #fff; font-size: 13pt; }
+  .thanh-in { display: none; }
+  .to-giay, .trang-in--ngang .to-giay { width: auto; min-height: 0; margin: 0; padding: 0; box-shadow: none; }
+  .bang-giay tr { page-break-inside: avoid; }
+  .bang-giay thead { display: table-header-group; }
+}

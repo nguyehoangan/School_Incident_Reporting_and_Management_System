@@ -1,4 +1,4 @@
-// Trang của Quản lý: Q01 Danh sách yêu cầu, Q02 Chi tiết & xử lý (SPEC mục 8). Q03–Q05 ở các router riêng (đợt 5), Q06 làm ở đợt 6.
+// Trang của Quản lý: Q01 Danh sách yêu cầu, Q02 Chi tiết & xử lý (SPEC mục 8). Q03–Q06 ở các router riêng.
 const express = require('express');
 const { chiVaiTro } = require('../middleware/auth');
 const { gioVN, choONhapGio, hanKiemTraMacDinh } = require('../lib/thoiGian');
@@ -114,11 +114,10 @@ router.post('/yeu-cau/:id/:hanhDong', (req, res, next) => {
   }
 });
 
-// Q03, Q04, Q05 (đợt 5): mỗi màn hình một router riêng, đã nằm sau chiVaiTro('QUAN_LY') ở đầu file
+// Q03–Q06: mỗi màn hình một router riêng, đã nằm sau chiVaiTro('QUAN_LY') ở đầu file
 router.use('/phan-cong', require('./qlPhanCong'));
 router.use('/co-so-vat-chat', require('./qlDanhMuc'));
 router.use('/ky-thuat-vien', require('./qlKtv'));
-// Q06 làm ở đợt 6, giữ trang tạm
-router.get('/so-tiep-nhan', (req, res) => res.render('trang-tam', { tieuDe: 'Sổ tiếp nhận thông báo sự cố (M.02)', maMan: 'Q06' }));
+router.use('/so-tiep-nhan', require('./qlSoTiepNhan'));
 
 module.exports = router;
