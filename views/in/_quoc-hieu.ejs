@@ -1,0 +1,11 @@
+<%# Đầu trang: bên trái tên trường (+ dòng đơn vị), bên phải quốc hiệu. Tham số: dongDuoi (chuỗi, có thể rỗng) %>
+<div class="dau-giay">
+  <div class="dau-giay__trai">
+    <div>ĐẠI HỌC BÁCH KHOA HÀ NỘI</div>
+    <% if (dongDuoi) { %><div class="dau-giay__don-vi"><%= dongDuoi %></div><% } %>
+  </div>
+  <div class="dau-giay__phai">
+    <div><b>CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM</b></div>
+    <div class="gach-chan"><b>Độc lập - Tự do - Hạnh phúc</b></div>
+  </div>
+</div>

@@ -1,0 +1,44 @@
+<%- include('_dau') %>
+<%- include('_quoc-hieu', { dongDuoi: '' }) %>
+<%
+  const cham = '.............................................';
+  const chamNgan = '..............................';
+  const coMay = !!yc.thiet_bi_id;
+%>
+<h1 class="tieu-de-giay tieu-de-giay--nho">BIÊN BẢN KIỂM TRA KỸ THUẬT</h1>
+
+<div class="noi-dung-bb">
+  <p>Thời gian: <%= gioChu(bb.thoi_gian) %></p>
+  <p>Địa điểm: <%= diaDiem %></p>
+  <p><b>Chúng tôi gồm:</b></p>
+  <table class="bang-thanh-phan">
+    <tr><td>1. <%= yc.ten_ql_tiep_nhan || cham %></td><td>Đại diện Phòng Quản lý cơ sở vật chất</td></tr>
+    <tr><td>2. <%= bb.ten_ktv %></td><td>Cán bộ KT Phòng Quản lý cơ sở vật chất</td></tr>
+    <tr><td>3. <%= yc.ten_sv %> (MSSV <%= yc.mssv %>)</td><td>Đại diện đơn vị đề nghị</td></tr>
+    <tr><td>4. <%= cham %></td><td>Đại diện Phòng Tài chính Kế toán</td></tr>
+    <tr><td>5. <%= cham %></td><td>Chuyên gia kỹ thuật (nếu mời ngoài)</td></tr>
+  </table>
+  <p>Đơn vị: <%= diaDiem %></p>
+  <p><b>Cùng tiến hành kiểm tra hiện trạng thiết bị:</b></p>
+  <div class="hai-cot">
+    <p>Tên máy: <%= tenMay %></p><p>Ký hiệu: <%= coMay ? yc.ma_tai_san : chamNgan %></p>
+    <p>Nơi đặt máy: Phòng <%= yc.ma_nha %>-<%= yc.ma_phong %></p><p>Nước sản xuất: <%= chamNgan %></p>
+    <p>Năm sử dụng: <%= coMay && yc.nam_su_dung ? yc.nam_su_dung : chamNgan %></p><p>Giá trị còn lại: <%= chamNgan %></p>
+  </div>
+  <p>Thiết bị còn bảo hành: <b><%= bb.con_bao_hanh ? 'Có' : 'Không' %></b><%= coMay && yc.han_bao_hanh ? ' (hạn bảo hành ' + dinhDang(yc.han_bao_hanh) + ')' : '' %></p>
+  <p>Tình trạng sự cố: <span class="xuong-dong"><%= bb.tinh_trang_su_co %></span></p>
+  <p>Nguyên nhân: <span class="xuong-dong"><%= bb.nguyen_nhan %></span></p>
+  <p><b>Biện pháp đề nghị xử lý:</b></p>
+  <% bienPhap.forEach(function (b) { %>
+  <p class="bien-phap"><span class="o-vuong"><%= b[1] ? '✓' : '' %></span> <%= b[0] %>: <%= b[1] || cham %></p>
+  <% }) %>
+</div>
+
+<div class="o-ky o-ky--5">
+  <div class="o-ky__muc"><p class="o-ky__chuc-danh">ĐƠN VỊ SỬ DỤNG</p><p class="o-ky__huong-dan">(Ký, ghi rõ họ tên)</p><p class="o-ky__ten"><%= yc.ten_sv %></p></div>
+  <div class="o-ky__muc"><p class="o-ky__chuc-danh">CG. KỸ THUẬT</p><p class="o-ky__huong-dan">(Ký, ghi rõ họ tên)</p><p class="o-ky__ten"></p></div>
+  <div class="o-ky__muc"><p class="o-ky__chuc-danh">PHÒNG TCKT</p><p class="o-ky__huong-dan">(Ký, ghi rõ họ tên)</p><p class="o-ky__ten"></p></div>
+  <div class="o-ky__muc"><p class="o-ky__chuc-danh">CB P. QL CSVC</p><p class="o-ky__huong-dan">(Ký, ghi rõ họ tên)</p><p class="o-ky__ten"><%= bb.ten_ktv %></p></div>
+  <div class="o-ky__muc"><p class="o-ky__chuc-danh">P. QL CSVC</p><p class="o-ky__huong-dan">(Ký, ghi rõ họ tên)</p><p class="o-ky__ten"><%= yc.ten_ql_tiep_nhan || '' %></p></div>
+</div>
+<%- include('_cuoi') %>

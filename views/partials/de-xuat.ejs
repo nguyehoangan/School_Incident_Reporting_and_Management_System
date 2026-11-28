@@ -1,0 +1,6 @@
+<%# Biện pháp đề nghị xử lý của biên bản M.04 (dùng ở Q02, K02). Tham số: bb = dòng bien_ban_kiem_tra %>
+<ul class="ds-de-xuat">
+  <% [['Mua vật tư thay thế', bb.de_xuat_mua_vat_tu], ['Thuê đơn vị sửa chữa', bb.de_xuat_thue_sua], ['Hỏng, đề nghị thanh lý', bb.de_xuat_thanh_ly]].forEach(function (x) { %>
+  <li class="<%= x[1] ? 'co' : '' %>"><span class="o-danh-dau" aria-hidden="true"><%= x[1] ? '✓' : '' %></span><span><span class="an-di"><%= x[1] ? 'Có đề nghị:' : 'Không đề nghị:' %></span> <b><%= x[0] %></b><%= x[1] ? ': ' + x[1] : '' %></span></li>
+  <% }) %>
+</ul>

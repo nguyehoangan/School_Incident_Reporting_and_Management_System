@@ -10,7 +10,7 @@
   <div class="thanh-tieu-de">
     <h1 class="tieu-de-trang">Yêu cầu <%= yc.ma_yeu_cau %> <span class="nhan-tt nhan-tt--<%= trangThai.mau %>"><%= trangThai.ten %></span></h1>
     <div class="nhom-nut">
-      <button type="button" class="nut-phu" id="nut-in-m01" hidden>In phiếu yêu cầu (M.01)</button>
+      <a class="nut-phu" id="nut-in-m01" href="/in/m01/<%= yc.id %>">In phiếu yêu cầu (M.01)</a>
       <% if (choPhepHuy) { %>
       <button type="button" class="nut-nguy-hiem" id="nut-huy">Hủy yêu cầu</button>
       <% } %>

@@ -1,0 +1,45 @@
+<%- include('_dau') %>
+<%- include('_quoc-hieu', { dongDuoi: 'ĐƠN VỊ: ' + donVi }) %>
+
+<h1 class="tieu-de-giay">PHIẾU YÊU CẦU SỬA CHỮA TRANG THIẾT BỊ</h1>
+<p class="giua">Số: <%= yc.ma_yeu_cau %> &nbsp;·&nbsp; Kính gửi: Phòng Quản lý cơ sở vật chất</p>
+
+<h2 class="phan-giay">I. PHẦN ĐỀ NGHỊ CỦA ĐƠN VỊ:</h2>
+<p>Người đề nghị: <%= yc.ten_sv %> – MSSV <%= yc.mssv %><%= hienEmail ? ' – ' + yc.email_sv : '' %>, đề nghị được sửa chữa nội dung sau:</p>
+<table class="bang-giay">
+  <colgroup><col style="width:8%"><col style="width:32%"><col style="width:41%"><col style="width:19%"></colgroup>
+  <thead><tr><th>STT</th><th>Nội dung cần sửa chữa</th><th>Tình trạng hư hỏng</th><th>Ghi chú</th></tr></thead>
+  <tbody>
+    <% phanI.forEach(function (d) { %>
+    <tr><td><%= d.stt %></td><td><%= d.noiDung %></td><td class="xuong-dong"><%= d.tinhTrang %></td><td><%= d.ghiChu %></td></tr>
+    <% }) %>
+  </tbody>
+</table>
+<div class="o-ky o-ky--phai">
+  <div class="o-ky__muc">
+    <p class="o-ky__ngay"><%= ngayChu(yc.thoi_gian_gui) %></p>
+    <p class="o-ky__chuc-danh">NGƯỜI ĐỀ NGHỊ</p>
+    <p class="o-ky__huong-dan">(Ký, ghi rõ họ tên)</p>
+    <p class="o-ky__ten"><%= yc.ten_sv %></p>
+  </div>
+</div>
+
+<h2 class="phan-giay">II. PHẦN SỬA CHỮA VÀ NGHIỆM THU:</h2>
+<table class="bang-giay">
+  <colgroup><col style="width:8%"><col style="width:52%"><col style="width:15%"><col style="width:25%"></colgroup>
+  <thead><tr><th>STT</th><th>Nội dung sửa chữa</th><th>Số lượng</th><th>Ghi chú</th></tr></thead>
+  <tbody>
+    <% if (phanII.length) { phanII.forEach(function (d) { %>
+    <tr><td><%= d.stt %></td><td><%= d.noi_dung %></td><td><%= d.so_luong == null ? '' : d.so_luong %></td><td><%= d.ghi_chu || '' %></td></tr>
+    <% }) } else { for (var i = 0; i < 3; i++) { %>
+    <tr class="dong-trong"><td></td><td></td><td></td><td></td></tr>
+    <% } } %>
+  </tbody>
+</table>
+<p class="o-ky__ngay o-ky__ngay--phai"><%= ngayChu(ky.ngay) %></p>
+<div class="o-ky o-ky--3">
+  <div class="o-ky__muc"><p class="o-ky__chuc-danh">CÁN BỘ KỸ THUẬT</p><p class="o-ky__huong-dan">(Ký, ghi rõ họ tên)</p><p class="o-ky__ten"><%= ky.ktv %></p></div>
+  <div class="o-ky__muc"><p class="o-ky__chuc-danh">ĐƠN VỊ SỬ DỤNG</p><p class="o-ky__huong-dan">(Ký, ghi rõ họ tên)</p><p class="o-ky__ten"><%= ky.donViSuDung %></p></div>
+  <div class="o-ky__muc"><p class="o-ky__chuc-danh">PHÒNG QUẢN LÝ CSVC</p><p class="o-ky__huong-dan">(Ký, ghi rõ họ tên)</p><p class="o-ky__ten"><%= ky.ql %></p></div>
+</div>
+<%- include('_cuoi') %>

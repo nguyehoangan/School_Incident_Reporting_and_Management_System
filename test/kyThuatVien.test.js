@@ -119,6 +119,12 @@ async function dangNhap(khoa) {
       return gui(`/ky-thuat-vien/viec/${id}/bao-ket-qua`, { method: 'POST', body: f });
     },
     post: (duong) => gui(duong, { method: 'POST' }),
+    // Gửi form K02 với các trường tùy ý (dùng cho nhánh "Không khắc phục tại chỗ" – biên bản M.04)
+    guiForm: (id, truong) => {
+      const f = new FormData();
+      Object.entries(truong).forEach(([k, v]) => f.append(k, v));
+      return gui(`/ky-thuat-vien/viec/${id}/bao-ket-qua`, { method: 'POST', body: f });
+    },
   };
 }
 // Đọc thân trang và giải mã các ký tự EJS đã escape để so sánh với chữ hiển thị
@@ -217,7 +223,7 @@ test('BR-04: sau khi QL đổi người / yêu cầu làm lại cho KTV khác th
 });
 
 // ================================================================ K02
-test('K02: hiện thông tin yêu cầu, ghi chú giao việc, KHÔNG hiện email SV; nút In M.01 có nhưng ẩn; "Không khắc phục" bị khóa', async () => {
+test('K02: hiện thông tin yêu cầu, ghi chú giao việc, KHÔNG hiện email SV; chưa có phần II thì chưa có nút In M.01; chọn được "Không khắc phục"', async () => {
   const v = taoViec({ tt: 'DANG_SUA', mucDo: 'KHAN_CAP' });
   const binh = await dangNhap('binh');
   const html = await thanTrang(await binh.get(`/ky-thuat-vien/viec/${v.id}`));
@@ -226,9 +232,10 @@ test('K02: hiện thông tin yêu cầu, ghi chú giao việc, KHÔNG hiện ema
   assert.ok(html.includes('Quản Lý'), 'người giao');
   assert.ok(html.includes('Nguyễn Hoàng An') && html.includes('20225001'));
   assert.ok(!html.includes(nd.an.email) && !html.includes('@sis.hust.edu.vn'), 'không lộ email SV');
-  assert.match(html, /id="nut-in-m01" hidden/);
-  assert.match(html, /value="KHONG_KHAC_PHUC" disabled/);
-  assert.ok(html.includes('(làm ở đợt 6)'));
+  assert.ok(!html.includes('nut-in-m01') && !html.includes('nut-in-m04'), 'SPEC 8 – K02: In M.01 khi đã có phần II, In M.04 khi đã lập biên bản');
+  assert.match(html, /value="KHONG_KHAC_PHUC"\s*>/, 'nhánh "Không khắc phục tại chỗ" đã mở');
+  assert.ok(!/value="KHONG_KHAC_PHUC"[^>]*disabled/.test(html));
+  assert.ok(html.includes('name="tinh_trang_su_co"') && html.includes('name="nguyen_nhan"') && html.includes('name="bp_thue_sua"'));
   assert.match(html, /name="dong\[0\]\[noi_dung\]"/);
   assert.ok(!html.includes('Bắt đầu kiểm tra</button>'), 'Đang xử lý thì không còn nút Bắt đầu');
 });
@@ -360,4 +367,87 @@ test('Yêu cầu làm lại: KTV cũ thấy lại việc ở tab Cần làm kèm
   assert.ok((await thanTrang(await binh.get('/ky-thuat-vien/viec?tab=da-xong'))).includes(v.ma));
   const ct = await thanTrang(await binh.get(`/ky-thuat-vien/viec/${v.id}`));
   assert.ok(ct.includes('Hoàn thành lúc') && ct.includes('Căn lại tiêu cự'));
+});
+
+// ================================================================ Đợt 6: nhánh "Không khắc phục tại chỗ" – biên bản M.04
+const bienBanHieuLuc = (id) => layCsdl().prepare('SELECT * FROM bien_ban_kiem_tra WHERE yeu_cau_id = ? AND con_hieu_luc = 1').get(id);
+
+test('Báo kết quả M.04 thiếu trường: báo lỗi theo từng ô, không ghi gì, giữ nhánh đã chọn', async () => {
+  const v = taoViec({ tt: 'DANG_SUA' });
+  const binh = await dangNhap('binh');
+  const truoc = soLichSu(v.id);
+  const html = await thanTrang(await theoDoi(binh, await binh.guiForm(v.id, {
+    ket_qua: 'KHONG_KHAC_PHUC', tinh_trang_su_co: '   ', nguyen_nhan: '', con_bao_hanh: '0',
+  })));
+  assert.ok(html.includes('Vui lòng kiểm tra lại các mục được đánh dấu.'));
+  // Lỗi đúng dưới từng ô: tình trạng, nguyên nhân (trống) và biện pháp (chưa chọn)
+  assert.match(html, /name="tinh_trang_su_co"[\s\S]{0,200}?<\/textarea>\s*<p class="loi-truong" >Mục này không được để trống/);
+  assert.match(html, /name="nguyen_nhan"[\s\S]{0,200}?<\/textarea>\s*<p class="loi-truong" >Mục này không được để trống/);
+  assert.match(html, /id="loi-de-xuat" >Chọn ít nhất 1 biện pháp đề nghị/);
+  assert.match(html, /value="KHONG_KHAC_PHUC" checked/, 'mở lại đúng nhánh biên bản');
+  assert.match(html, /data-nhanh="KHAC_PHUC_TAI_CHO" hidden/);
+  assert.equal(yc(v.id).trang_thai, 'DANG_SUA');
+  assert.equal(yc(v.id).ket_qua_kiem_tra, null);
+  assert.equal(soLichSu(v.id), truoc);
+  assert.equal(bienBanHieuLuc(v.id), undefined);
+});
+
+test('Báo kết quả M.04 thiếu biện pháp (chỉ ghi chi tiết mà không đánh dấu) bị từ chối, giữ giá trị đã nhập', async () => {
+  const v = taoViec({ tt: 'DANG_SUA' });
+  const binh = await dangNhap('binh');
+  const truoc = soLichSu(v.id);
+  const html = await thanTrang(await theoDoi(binh, await binh.guiForm(v.id, {
+    ket_qua: 'KHONG_KHAC_PHUC', tinh_trang_su_co: 'Máy nén không chạy', nguyen_nhan: 'Hỏng block máy nén',
+    ct_thue_sua: 'Thay block, nạp gas', con_bao_hanh: '1',
+  })));
+  assert.ok(html.includes('Chọn ít nhất 1 biện pháp đề nghị'));
+  assert.ok(html.includes('>Máy nén không chạy</textarea>') && html.includes('>Hỏng block máy nén</textarea>'), 'giữ tình trạng, nguyên nhân');
+  assert.ok(html.includes('value="Thay block, nạp gas"'), 'giữ chi tiết biện pháp');
+  assert.match(html, /name="con_bao_hanh" value="1" checked/, 'giữ lựa chọn còn bảo hành');
+  assert.ok(!/name="bp_thue_sua" value="1" checked/.test(html));
+  assert.equal(yc(v.id).trang_thai, 'DANG_SUA');
+  assert.equal(soLichSu(v.id), truoc);
+  assert.equal(bienBanHieuLuc(v.id), undefined);
+});
+
+test('Báo kết quả M.04 đủ trường: lưu biên bản (chỉ biện pháp được đánh dấu), sang Chờ nghiệm thu; có nút In M.04, chưa có In M.01', async () => {
+  const v = taoViec({ tt: 'DANG_SUA' });
+  const binh = await dangNhap('binh');
+  const truoc = soLichSu(v.id);
+  const r = await binh.guiForm(v.id, {
+    ket_qua: 'KHONG_KHAC_PHUC', tinh_trang_su_co: 'Máy nén không chạy, dàn lạnh không lạnh', nguyen_nhan: 'Hỏng block máy nén',
+    bp_thue_sua: '1', ct_thue_sua: ' Thay block, nạp gas ',
+    bp_mua_vat_tu: '1', ct_mua_vat_tu: '',              // đánh dấu, không ghi chi tiết -> "Có đề nghị"
+    ct_thanh_ly: 'Không đánh dấu nên bỏ qua',          // có chữ nhưng không đánh dấu -> không đề xuất
+    con_bao_hanh: '1',
+    'dong[0][noi_dung]': 'Dòng của nhánh kia', 'dong[0][so_luong]': '1', // dữ liệu của nhánh kia bị bỏ qua
+  });
+  const html = await thanTrang(await theoDoi(binh, r));
+  assert.match(html, /Đã lập biên bản kiểm tra kỹ thuật \(M\.04\) cho YC-/);
+  const sau = yc(v.id);
+  assert.equal(sau.trang_thai, 'CHO_NGHIEM_THU');
+  assert.equal(sau.ket_qua_kiem_tra, 'KHONG_KHAC_PHUC');
+  assert.equal(soLichSu(v.id), truoc + 1);
+  const bb = bienBanHieuLuc(v.id);
+  assert.equal(bb.ktv_id, nd.binh.id);
+  assert.equal(bb.tinh_trang_su_co, 'Máy nén không chạy, dàn lạnh không lạnh');
+  assert.equal(bb.nguyen_nhan, 'Hỏng block máy nén');
+  assert.equal(bb.de_xuat_thue_sua, 'Thay block, nạp gas');
+  assert.equal(bb.de_xuat_mua_vat_tu, 'Có đề nghị');
+  assert.equal(bb.de_xuat_thanh_ly, null);
+  assert.equal(bb.con_bao_hanh, 1);
+  assert.equal(layCsdl().prepare('SELECT COUNT(*) n FROM noi_dung_sua_chua WHERE yeu_cau_id = ?').get(v.id).n, 0);
+  assert.equal(tinhTrangTB(v.thietBi), 'DANG_SUA', 'thiết bị chỉ đổi khi QL duyệt biên bản');
+  // Trang chi tiết: chỉ xem biên bản, có nút In M.04, chưa có phần II nên chưa có In M.01
+  assert.ok(html.includes('Thay block, nạp gas') && html.includes('Đang chờ quản lý nghiệm thu'));
+  assert.ok(html.includes(`href="/in/m04/${v.id}"`));
+  assert.ok(!html.includes(`href="/in/m01/${v.id}"`));
+  assert.ok(!html.includes('form-ket-qua'));
+});
+
+test('Khắc phục tại chỗ xong thì K02 có nút In M.01', async () => {
+  const v = taoViec({ tt: 'CHO_NGHIEM_THU' });
+  const html = await thanTrang(await (await dangNhap('binh')).get(`/ky-thuat-vien/viec/${v.id}`));
+  assert.ok(html.includes(`href="/in/m01/${v.id}"`));
+  assert.ok(!html.includes(`href="/in/m04/${v.id}"`));
 });

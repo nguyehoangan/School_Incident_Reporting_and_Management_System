@@ -26,7 +26,8 @@
     </h1>
     <div class="nhom-nut">
       <a class="nut-vien-xam" href="<%= quayLai %>">‹ Quay lại danh sách</a>
-      <button type="button" class="nut-vien-xam" id="nut-in-m01" hidden>In M.01</button>
+      <a class="nut-vien-xam" id="nut-in-m01" href="/in/m01/<%= yc.id %>">In M.01</a>
+      <% if (bb) { %><a class="nut-vien-xam" id="nut-in-m04" href="/in/m04/<%= yc.id %>">In M.04</a><% } %>
     </div>
   </div>
 
@@ -179,11 +180,7 @@
           <dt>Nguyên nhân</dt><dd class="xuong-dong"><%= bb.nguyen_nhan %></dd>
           <dt>Biện pháp đề nghị</dt>
           <dd>
-            <ul class="ds-de-xuat">
-              <% [['Mua vật tư thay thế', bb.de_xuat_mua_vat_tu], ['Thuê đơn vị sửa chữa', bb.de_xuat_thue_sua], ['Hỏng, đề nghị thanh lý', bb.de_xuat_thanh_ly]].forEach(function (x) { %>
-              <li class="<%= x[1] ? 'co' : '' %>"><span class="o-danh-dau" aria-hidden="true"><%= x[1] ? '✓' : '' %></span><span><span class="an-di"><%= x[1] ? 'Có đề nghị:' : 'Không đề nghị:' %></span> <b><%= x[0] %></b><%= x[1] ? ': ' + x[1] : '' %></span></li>
-              <% }) %>
-            </ul>
+            <%- include('../partials/de-xuat', { bb }) %>
           </dd>
           <dt>Còn bảo hành</dt><dd><%= bb.con_bao_hanh ? 'Có' : 'Không' %></dd>
         </dl>
